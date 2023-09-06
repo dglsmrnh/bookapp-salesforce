@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DefaultLanguage</fullName>
+    <inlineHelpText>O idioma a ser usado quando o conteúdo traduzido não está disponível. Esse valor vem do primeiro idioma compatível para sua organização no Workbench de tradução.</inlineHelpText>
+</CustomField>
