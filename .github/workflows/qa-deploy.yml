@@ -1,4 +1,4 @@
-name: SFDX-CLI Deploy from Repository
+name: SFDX-CLI QA Deploy from Repository
 on: 
   push:
     branches:

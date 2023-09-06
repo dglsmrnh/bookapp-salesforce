@@ -1,4 +1,4 @@
-name: SFDX-CLI Deploy from Repository
+name: SFDX-CLI QA Validate from Repository
 on: 
   pull_request:
     branches:
