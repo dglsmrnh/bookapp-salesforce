@@ -6,7 +6,7 @@ on:
     paths:
       - 'force-app/**'
 jobs:
-  SFDX-CLI-Deploy:
+  SFDX-CLI-DEV-Deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
