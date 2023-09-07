@@ -1,3 +1,4 @@
+@IsTest
 public with sharing class TestClassTest {
     @IsTest
     public static void test(){
