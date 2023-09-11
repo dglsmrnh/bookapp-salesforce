@@ -2,8 +2,7 @@ public with sharing class TestClass {
     public TestClass() {
 
     }
-
-    static void showConsole() {
+    public static void showConsole() {
         console.log('a');
     }
 }
