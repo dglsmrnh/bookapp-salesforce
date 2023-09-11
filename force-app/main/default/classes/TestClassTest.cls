@@ -5,6 +5,7 @@ public with sharing class TestClassTest {
         
         Test.startTest();
         TestClass t = new TestClass();
+        t.showConsole();
         Test.stopTest();
         
     }

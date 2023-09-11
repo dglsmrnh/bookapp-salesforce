@@ -1,5 +1,9 @@
 public with sharing class TestClass {
     public TestClass() {
-        System.debug('a');
+
+    }
+
+    static void showConsole() {
+        console.log('a')
     }
 }
