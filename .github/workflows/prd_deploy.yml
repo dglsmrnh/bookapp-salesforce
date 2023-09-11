@@ -1,18 +1,22 @@
-name: SFDX-CLI QA Deploy from Repository
+name: SFDX-CLI Deploy from Repository
 on: 
   push:
     branches:
-      - qa
+      - main
     paths:
       - 'force-app/**'
 jobs:
-  SFDX-CLI-QA-Deploy:
+  SFDX-CLI-Deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Fetch all history commit
+          fetch-depth: 0
       - run: npm install sfdx-cli --location=global
       - run: echo 'y' | sfdx plugins:install sfdx-git-delta
-      - run: sfdx force:auth:jwt:grant --clientid ${{ secrets.CLIENTID_QA }} --jwtkeyfile=build/serverqa.key --username ${{ secrets.USERNAME_QA }} --setdefaultdevhubusername --instanceurl=${{ secrets.INSTANCE_URL_QA }} --setalias org
+      - run: sfdx force:auth:jwt:grant --clientid ${{ secrets.CLIENT_ID_PRD }} --jwtkeyfile=build/server.key --username ${{ secrets.USERNAME_PRD }} --setdefaultdevhubusername --instanceurl=${{ secrets.INSTANCE_URL_PRD }} --setalias org
       - run: git fetch origin "+refs/heads/*:refs/remotes/origin/*"
       - run: sfdx sgd:source:delta --to "HEAD" --from $(git merge-base HEAD origin/main) --output . -i .gitignore
       - run: sfdx force:source:deploy -x package/package.xml -u org
