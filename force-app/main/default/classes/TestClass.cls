@@ -3,6 +3,6 @@ public with sharing class TestClass {
 
     }
     public static void showConsole() {
-        console.log('a');
+        System.debug('a');
     }
 }
