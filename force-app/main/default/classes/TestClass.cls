@@ -4,6 +4,6 @@ public with sharing class TestClass {
     }
 
     static void showConsole() {
-        console.log('a')
+        console.log('a');
     }
 }
