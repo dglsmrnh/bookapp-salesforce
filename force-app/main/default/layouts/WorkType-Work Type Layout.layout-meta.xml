@@ -58,6 +58,14 @@
                 <behavior>Edit</behavior>
                 <field>TimeFrameEndUnit</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ServiceReportTemplateId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ShouldAutoCreateSvcAppt</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
@@ -96,6 +104,11 @@
     </layoutSections>
     <relatedLists>
         <relatedList>RelatedEntityHistoryList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Product2</fields>
+        <fields>QuantityRequired</fields>
+        <relatedList>ProductsRequired</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>Skill</fields>
