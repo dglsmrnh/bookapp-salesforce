@@ -55,6 +55,7 @@
         <fields>StartTime</fields>
         <fields>EndTime</fields>
         <fields>Type</fields>
+        <fields>RecordsetFilterCriteria</fields>
         <relatedList>TimeSlots</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
