@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Device</fullName>
+    <active>true</active>
+    <label>Device</label>
+    <picklistValues>
+        <picklist>Family</picklist>
+        <values>
+            <fullName>Book</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Class</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Device</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>None</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Skill</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>QuantityUnitOfMeasure</picklist>
+        <values>
+            <fullName>Each</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>
