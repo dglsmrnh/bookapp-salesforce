@@ -16,6 +16,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>ProductItemId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>AssetId</field>
             </layoutItems>
             <layoutItems>
@@ -31,6 +35,10 @@
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>ReturnOrderId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ProductRequestLineItemId</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

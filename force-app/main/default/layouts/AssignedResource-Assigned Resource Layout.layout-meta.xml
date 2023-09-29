@@ -13,6 +13,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>EstimatedTravelTime</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Role</field>
             </layoutItems>
             <layoutItems>
@@ -24,6 +28,10 @@
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>ServiceResourceId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ActualTravelTime</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
