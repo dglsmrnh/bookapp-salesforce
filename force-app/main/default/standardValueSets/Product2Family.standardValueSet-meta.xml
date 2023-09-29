@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>None</fullName>
+        <default>false</default>
+        <label>None</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Book</fullName>
+        <default>false</default>
+        <label>Book</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Class</fullName>
+        <default>false</default>
+        <label>Class</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Skill</fullName>
+        <default>false</default>
+        <label>Skill</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Device</fullName>
+        <default>false</default>
+        <label>Device</label>
+    </standardValue>
+</StandardValueSet>
