@@ -73,13 +73,6 @@
         <relatedList>WorkStepTemplates</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>Name</fields>
-        <fields>WorkType</fields>
-        <fields>Asset</fields>
-        <fields>IsActive</fields>
-        <relatedList>WorkPlanSelectionRule</relatedList>
-    </relatedLists>
-    <relatedLists>
         <relatedList>RelatedFileList</relatedList>
     </relatedLists>
     <relatedLists>

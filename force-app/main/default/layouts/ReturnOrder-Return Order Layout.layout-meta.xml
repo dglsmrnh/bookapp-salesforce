@@ -18,10 +18,6 @@
                 <behavior>Edit</behavior>
                 <field>AccountId</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>ProductRequestId</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

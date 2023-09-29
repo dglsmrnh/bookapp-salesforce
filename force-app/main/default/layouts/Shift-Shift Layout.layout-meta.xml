@@ -7,10 +7,6 @@
         <editHeading>true</editHeading>
         <layoutColumns>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>IsNonStandard</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Required</behavior>
                 <field>StartTime</field>
             </layoutItems>
@@ -57,9 +53,6 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
-    <miniLayout>
-        <fields>IsNonStandard</fields>
-    </miniLayout>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>UsernameTooShort</fullName>
-    <active>true</active>
-    <errorConditionFormula>LEN(TRIM(Username__c)) &lt; 3</errorConditionFormula>
-    <errorDisplayField>Username__c</errorDisplayField>
-    <errorMessage>The username is too short, your username must be at least 3 characters long</errorMessage>
-</ValidationRule>
