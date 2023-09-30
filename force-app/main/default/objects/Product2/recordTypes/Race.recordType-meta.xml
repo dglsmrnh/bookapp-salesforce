@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Skill</fullName>
+    <fullName>Race</fullName>
     <active>true</active>
-    <label>Skill</label>
+    <label>Race</label>
     <picklistValues>
         <picklist>Family</picklist>
         <values>
@@ -10,7 +10,7 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Skill</fullName>
+            <fullName>Race</fullName>
             <default>true</default>
         </values>
     </picklistValues>
