@@ -26,4 +26,14 @@
         <default>false</default>
         <label>Device</label>
     </standardValue>
+    <standardValue>
+        <fullName>Attribute</fullName>
+        <default>false</default>
+        <label>Attribute</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Race</fullName>
+        <default>false</default>
+        <label>Race</label>
+    </standardValue>
 </StandardValueSet>

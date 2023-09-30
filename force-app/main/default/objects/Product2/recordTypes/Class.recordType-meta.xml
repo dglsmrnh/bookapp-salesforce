@@ -6,23 +6,11 @@
     <picklistValues>
         <picklist>Family</picklist>
         <values>
-            <fullName>Book</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Class</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Device</fullName>
-            <default>false</default>
+            <default>true</default>
         </values>
         <values>
             <fullName>None</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Skill</fullName>
             <default>false</default>
         </values>
     </picklistValues>
