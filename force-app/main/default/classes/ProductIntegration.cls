@@ -19,7 +19,8 @@ global with sharing class ProductIntegration {
     
             List<ProductDataObject> productList = new List<ProductDataObject>();
 
-            for(Product2 prod : [SELECT Id, Name, Type, Description, ProductClass, ProductCode, StockKeepingUnit FROM Product2 WHERE IsActive = TRUE AND RecordType.Name =: recordTypeString]) {
+            for(Product2 prod : [SELECT Id, Name, Type, Description, ProductClass, ProductCode, StockKeepingUnit 
+                                 FROM Product2 WHERE IsActive = TRUE AND RecordType.Name =: recordTypeString]) {
                 ProductDataObject newProd = new ProductDataObject(prod);
                 productList.add(newProd);
             }
