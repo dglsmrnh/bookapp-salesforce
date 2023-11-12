@@ -41,7 +41,7 @@ global with sharing class QuestIntegration {
         catch(Exception e) {
             // RestResponse res = RestContext.response;
             // res.statusCode = 500;
-            PostResponse response = new PostResponse(e.getMessage());            
+            ErrorResponse response = new ErrorResponse(e.getMessage());
             return JSON.serialize(response);
         }
     }
@@ -55,11 +55,6 @@ global with sharing class QuestIntegration {
             this.success = true;
             this.quests = quests;
         }
-
-        global GetResponse(String message) {
-            this.success = false;
-            this.message = message;
-        }
     }
 
     global class Quest {
@@ -72,28 +67,7 @@ global with sharing class QuestIntegration {
             this.info = product;
             this.recommendation = recommendation;
         }
-    }
-
-    global class PostRequest {
-        global String username;
-        global String id;
-    }
-    
-    global class PostResponse {
-        global Boolean success;
-        global String message;
-        global String id;
-
-        global PostResponse(Id id) {
-            this.success = true;
-            this.id = id;
-        }
-
-        global PostResponse(String message) {
-            this.success = false;
-            this.message = message;
-        }
-    }
+    }    
 
     @HttpPost
     global static String createQuest(PostRequest request) {
@@ -126,8 +100,24 @@ global with sharing class QuestIntegration {
             PostResponse response = new PostResponse(asset.Id);
             return JSON.serialize(response);
         } catch (Exception e) {
-            PostResponse response = new PostResponse(e.getMessage());
+            ErrorResponse response = new ErrorResponse(e.getMessage());
             return JSON.serialize(response);
+        }
+    }
+
+    global class PostRequest {
+        global String username;
+        global String id;
+    }
+    
+    global class PostResponse {
+        global Boolean success;
+        global String message;
+        global String id;
+
+        global PostResponse(Id id) {
+            this.success = true;
+            this.id = id;
         }
     }
 
@@ -185,7 +175,7 @@ global with sharing class QuestIntegration {
 
             return JSON.serialize(response);
         } catch (Exception e) {
-            PatchResponse response = new PatchResponse(e.getMessage());
+            ErrorResponse response = new ErrorResponse(e.getMessage());
             return JSON.serialize(response);
         }
     }
@@ -256,11 +246,6 @@ global with sharing class QuestIntegration {
             this.id = questId;
             this.hasCheckpoint = false;
             this.capped = false;            
-        }
-
-        global PatchResponse(String message) {
-            this.success = false;
-            this.message = message;
         }
     }
 
