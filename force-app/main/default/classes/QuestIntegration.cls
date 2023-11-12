@@ -94,6 +94,7 @@ global with sharing class QuestIntegration {
             asset.AccountId = account.Id;
             asset.Product2Id = questId;
             asset.Name = product.Name;
+            asset.RecordTypeId = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
             insert asset;
 
