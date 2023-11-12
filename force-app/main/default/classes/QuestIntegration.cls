@@ -1,5 +1,8 @@
-@RestResource(urlMapping='/quests')
+@RestResource(urlMapping='/quest')
 global with sharing class QuestIntegration {
+    
+    global static final Id ASSET_RECORDTYPE = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Book').getRecordTypeId();
+    global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
     @HttpGet
     global static String getAvailableQuests() {
@@ -27,7 +30,7 @@ global with sharing class QuestIntegration {
             //     ','
             // );
 
-            String query = 'SELECT ' + fields + ' FROM Product2 WHERE isActive = true';
+            String query = 'SELECT ' + fields + ' FROM Product2 WHERE isActive = true AND RecordTypeId =: PRODUCT_RECORDTYPE';
             List<Product2> productList = Database.query(query);
             
             List<Quest> questList = new List<Quest>();
@@ -41,8 +44,7 @@ global with sharing class QuestIntegration {
         catch(Exception e) {
             // RestResponse res = RestContext.response;
             // res.statusCode = 500;
-            ErrorResponse response = new ErrorResponse(e.getMessage());
-            return JSON.serialize(response);
+            return JSON.serialize(new ErrorResponse(e.getMessage()));
         }
     }
 
@@ -94,15 +96,14 @@ global with sharing class QuestIntegration {
             asset.AccountId = account.Id;
             asset.Product2Id = questId;
             asset.Name = product.Name;
-            asset.RecordTypeId = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Book').getRecordTypeId();
+            asset.RecordTypeId = ASSET_RECORDTYPE;
 
             insert asset;
 
             PostResponse response = new PostResponse(asset.Id);
             return JSON.serialize(response);
         } catch (Exception e) {
-            ErrorResponse response = new ErrorResponse(e.getMessage());
-            return JSON.serialize(response);
+            return JSON.serialize(new ErrorResponse(e.getMessage()));
         }
     }
 
@@ -176,8 +177,7 @@ global with sharing class QuestIntegration {
 
             return JSON.serialize(response);
         } catch (Exception e) {
-            ErrorResponse response = new ErrorResponse(e.getMessage());
-            return JSON.serialize(response);
+            return JSON.serialize(new ErrorResponse(e.getMessage()));
         }
     }
 
