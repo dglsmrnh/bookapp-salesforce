@@ -114,10 +114,12 @@ global with sharing class QuestIntegration {
             }
 
             Account account = [SELECT Id FROM Account WHERE Username__c =: username];
+            Product2 product = [SELECT Id, Name FROM Product2 WHERE Id =: questId AND IsActive = true];
 
             Asset asset = new Asset();
             asset.AccountId = account.Id;
             asset.Product2Id = questId;
+            asset.Name = product.Name;
 
             insert asset;
 

@@ -46,7 +46,8 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername'
+            Username__c = 'testUsername',
+            Password__c = 'Password@123'
         );
         insert testAccount;
 
@@ -87,7 +88,8 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername'
+            Username__c = 'testUsername',
+            Password__c = 'Password@123'
         );
         insert testAccount;
 
@@ -102,10 +104,19 @@ private class QuestIntegrationTest {
             AccountId = testAccount.Id,
             Product2Id = testProduct.Id,
             CurrentChapter__c = 1,
-            CurrentPage__c = 5
+            CurrentPage__c = 5,
+            Name = 'Test Product'
             // Add other required fields
         );
         insert testAsset;
+
+        BookCheckpoint__c testBookCheckpoint = new BookCheckpoint__c(
+            Book__c = testProduct.Id,
+            Chapter__c = 2,
+            Page__c = 5
+            // Add other required fields
+        );
+        insert testBookCheckpoint;
 
         // Call the REST service
         Test.startTest();
