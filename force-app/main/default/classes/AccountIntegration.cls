@@ -13,7 +13,7 @@ global with sharing class AccountIntegration {
             RestRequest thisReq = RestContext.request;
             List<ResponseBodyObject> responseBody = new List<ResponseBodyObject>();
 
-            List<AccountRequestBody> requestBodyAsList = (List<AccountRequestBody>) JSON.deserialize(thisReq.requestBody, List<AccountRequestBody>.Class);
+            List<AccountRequestBody> requestBodyAsList = (List<AccountRequestBody>) JSON.deserialize(thisReq.requestBody.toString(), List<AccountRequestBody>.Class);
 
             List<Account> accountInsertList = new List<Account>();
             List<Asset> assetInsertList = new List<Asset>();
@@ -21,27 +21,38 @@ global with sharing class AccountIntegration {
             for(AccountRequestBody bodyObj : requestBodyAsList) {
                 Account newAccount = new Account();
                 newAccount.Name = bodyObj.account.name;
-                newAccount.Genre__c = bodyObj.account.genre;
+                //newAccount.CharacterName__c = bodyObj.character.name;
+                newAccount.Email__c = bodyObj.account.email;
+                newAccount.Gender__c = bodyObj.account.genre;
+                newAccount.Birthday__c = bodyObj.account.birthdate;
+                newAccount.Username__c = bodyObj.account.username;
+                newAccount.Password__c = bodyObj.account.password;
                 accountInsertList.add(newAccount);
 
-                Asset classAsset = new Asset();
-                classAsset.Account = newAccount;
-                classAsset.RecordType = mapRecordTypeNameToInstance.get(bodyObj.character.classId);
-                assetInsertList.add(classAsset);
+                if(String.isNotBlank(bodyObj.character.classId)) {
+                    Asset classAsset = new Asset();
+                    classAsset.Account = newAccount;
+                    classAsset.RecordType = mapRecordTypeNameToInstance.containsKey(bodyObj.character.classId) ? mapRecordTypeNameToInstance.get(bodyObj.character.classId) : null;
+                    assetInsertList.add(classAsset);
+                }
 
-                Asset raceAsset = new Asset();
-                raceAsset.Account = newAccount;
-                raceAsset.RecordType = mapRecordTypeNameToInstance.get(bodyObj.character.raceId);
-                assetInsertList.add(raceAsset);
+                if(String.isNotBlank(bodyObj.character.raceId)) {
+                    Asset raceAsset = new Asset();
+                    raceAsset.Account = newAccount;
+                    raceAsset.RecordType = mapRecordTypeNameToInstance.containsKey(bodyObj.character.raceId) ? mapRecordTypeNameToInstance.get(bodyObj.character.raceId) : null;
+                    assetInsertList.add(raceAsset);
+                }
 
-                Asset colorAsset = new Asset();
-                colorAsset.Account = newAccount;
-                colorAsset.RecordType = mapRecordTypeNameToInstance.get(bodyObj.character.colorId);
-                assetInsertList.add(colorAsset);
+                if(String.isNotBlank(bodyObj.character.colorId)) {
+                    Asset colorAsset = new Asset();
+                    colorAsset.Account = newAccount;
+                    colorAsset.RecordType = mapRecordTypeNameToInstance.containsKey(bodyObj.character.colorId) ? mapRecordTypeNameToInstance.get(bodyObj.character.colorId) : null;
+                    assetInsertList.add(colorAsset);
+                }
             }
 
-            Database.insert(accountInsertList, false);
-            Database.insert(assetInsertList, false);
+            Database.insert(accountInsertList, true);
+            Database.insert(assetInsertList, true);
 
             for(Account acc : accountInsertList) {
                 ResponseBodyObject newResponse = new ResponseBodyObject();
@@ -60,42 +71,39 @@ global with sharing class AccountIntegration {
         }
         catch(Exception e) {
             List<ResponseBodyObject> responseBody = new List<ResponseBodyObject>();
-            ResponseBodyObject errorResponseBody = new ResponseBodyObject(e.getMessage());
+            ResponseBodyObject errorResponseBody = new ResponseBodyObject();
+            errorResponseBody.message = e.getMessage();
+            errorResponseBody.success = false;
+            responseBody.add(errorResponseBody);
 
             return JSON.serialize(responseBody);
         }
     }
 
-    private class AccountRequestBody {
-        AccountDataObject account;
-        CharacterDataObject character;
+    public class AccountRequestBody {
+        public AccountDataObject account;
+        public CharacterDataObject character;
     }
 
-    private class AccountDataObject {
-        String name;
-        String email;
-        String username;
-        String password;
-        String genre;
-        Date birthdate;
+    public class AccountDataObject {
+        public String name;
+        public String email;
+        public String username;
+        public String password;
+        public String genre;
+        public Date birthdate;
     }
 
-    private class CharacterDataObject {
-        String name;
-        String classId;
-        String raceId;
-        String colorId;
+    public class CharacterDataObject {
+        public String name;
+        public String classId;
+        public String raceId;
+        public String colorId;
     }
 
-    private class ResponseBodyObject {
-        Boolean success;
-        String message;
-        String id;
-
-        private ResponseBodyObject(String message) {
-            this.success = false;
-            this.id = null;
-            this.message = message;
-        }
+    public class ResponseBodyObject {
+        public Boolean success;
+        public String message;
+        public String id;
     }
 }
