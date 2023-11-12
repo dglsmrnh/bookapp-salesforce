@@ -43,6 +43,19 @@ global with sharing class AccountIntegration {
             Database.insert(accountInsertList, false);
             Database.insert(assetInsertList, false);
 
+            for(Account acc : accountInsertList) {
+                ResponseBodyObject newResponse = new ResponseBodyObject();
+                if(acc.Id != null) {
+                    newResponse.id = acc.Id;
+                    newResponse.success = true;
+                }
+                else {
+                    newResponse.success = false;
+                    newResponse.message = 'An error ocurred while tring to insert the account with the name ' + acc.Name;
+                }
+                responseBody.add(newResponse);
+            }
+
             return JSON.serialize(responseBody);
         }
         catch(Exception e) {
