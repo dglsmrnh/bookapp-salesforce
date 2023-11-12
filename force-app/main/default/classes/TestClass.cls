@@ -4,6 +4,6 @@ public with sharing class TestClass {
     }
 
     public void showDebug() {
-        System.debug('T');
+        System.debug('T'); //*
     }
 }
