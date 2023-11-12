@@ -13,7 +13,8 @@ private class QuestIntegrationTest {
 
         Product2 testProduct = new Product2(
             isActive = true,
-            Name = 'Test Asset'
+            Name = 'Test Asset',
+            RecordTypeId = QuestIntegration.PRODUCT_RECORDTYPE
             // Add other required fields
         );
         insert testProduct;
@@ -53,7 +54,8 @@ private class QuestIntegrationTest {
 
         Product2 testProduct = new Product2(
             Name = 'Test Product',
-            IsActive = true
+            IsActive = true,
+            RecordTypeId = QuestIntegration.PRODUCT_RECORDTYPE
             // Add other required fields
         );
         insert testProduct;
@@ -96,7 +98,7 @@ private class QuestIntegrationTest {
         Product2 testProduct = new Product2(
             Name = 'Test Product',
             IsActive = true,
-            RecordTypeId = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId()
+            RecordTypeId = QuestIntegration.PRODUCT_RECORDTYPE
             // Add other required fields
         );
         insert testProduct;
@@ -107,7 +109,7 @@ private class QuestIntegrationTest {
             CurrentChapter__c = 1,
             CurrentPage__c = 5,
             Name = 'Test Product',
-            RecordTypeId = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Book').getRecordTypeId()
+            RecordTypeId = QuestIntegration.ASSET_RECORDTYPE
             // Add other required fields
         );
         insert testAsset;
