@@ -95,7 +95,8 @@ private class QuestIntegrationTest {
 
         Product2 testProduct = new Product2(
             Name = 'Test Product',
-            IsActive = true
+            IsActive = true,
+            RecordTypeId = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId()
             // Add other required fields
         );
         insert testProduct;
@@ -105,7 +106,8 @@ private class QuestIntegrationTest {
             Product2Id = testProduct.Id,
             CurrentChapter__c = 1,
             CurrentPage__c = 5,
-            Name = 'Test Product'
+            Name = 'Test Product',
+            RecordTypeId = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Book').getRecordTypeId()
             // Add other required fields
         );
         insert testAsset;
@@ -113,7 +115,7 @@ private class QuestIntegrationTest {
         BookCheckpoint__c testBookCheckpoint = new BookCheckpoint__c(
             Book__c = testProduct.Id,
             Chapter__c = 2,
-            Page__c = 5
+            Page__c = 5            
             // Add other required fields
         );
         insert testBookCheckpoint;
