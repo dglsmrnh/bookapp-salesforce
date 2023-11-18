@@ -1,4 +1,4 @@
-@RestResource(urlMapping='/products')
+@RestResource(urlMapping='/product')
 global with sharing class ProductIntegration {
     @HttpGet
     global static String getProducts() {
@@ -10,28 +10,26 @@ global with sharing class ProductIntegration {
                 recordTypeString = thisReq.params.get('type');
             }
             else {
-                throw new TypeException('"type" parameter not found.');
+                throw new ProductException('"type" parameter not found.');
             }
             
             if([SELECT Id FROM RecordType WHERE Name =: recordTypeString].size() < 1) {
-                throw new TypeException('Selected type not found.');
+                throw new ProductException('Selected type not found.');
             }
-    
-            List<ProductDataObject> productList = new List<ProductDataObject>();
 
-            for(Product2 prod : [SELECT Id, Name, Type, Description, ProductClass, ProductCode, StockKeepingUnit 
-                                 FROM Product2 WHERE IsActive = TRUE AND RecordType.Name =: recordTypeString]) {
-                ProductDataObject newProd = new ProductDataObject(prod);
-                productList.add(newProd);
-            }
+            String fields = String.join(IntegrationUtils.getFields('Product2'), ', ');
+            // String fieldsProduct = String.join(
+            //     IntegrationUtils.addRelationshipObjectToFields(IntegrationUtils.getFields('Product2'), 'Product2'), 
+            //     ','
+            // );
+
+            String query = 'SELECT ' + fields + ' FROM Product2 WHERE isActive = true AND RecordType.DeveloperName =: recordTypeString';
+            List<Product2> productList = Database.query(query);
+
+            ResponseBodyObject responseBody = new ResponseBodyObject(productList);
     
-            ResponseBodyObject responseBody;
-    
-            if(productList.size() > 0) {
-                responseBody = new ResponseBodyObject(productList);
-            }
-            else {
-                throw new NoSuchElementException('No records with the selected type were found.');
+            if(productList.size() <= 0) {
+                throw new ProductException('No records with the selected type were found.');
             }
 
             return JSON.serialize(responseBody);
@@ -43,41 +41,23 @@ global with sharing class ProductIntegration {
         }
     }
 
-    public class ResponseBodyObject {
-        public Boolean success;
-        public List<ProductDataObject> products;
-        public String message;
+    global class ResponseBodyObject {
+        global Boolean success;
+        global List<Product2> products;
+        global String message;
 
-        private ResponseBodyObject(List<ProductDataObject> productList) {
+        global ResponseBodyObject(List<Product2> productList) {
             this.success = true;
             this.products = productList;
             this.message = null;
         }
         
-        private ResponseBodyObject(String message) {
+        global ResponseBodyObject(String message) {
             this.success = false;
-            this.products = null;
             this.message = message;
         }
     }
 
-    private class ProductDataObject {
-        String recordId;
-        String name;
-        String type;
-        String description;
-        String prodClass;
-        String code;
-        String sku;
-
-        private ProductDataObject(Product2 prod) {
-            this.recordId = prod.Id;
-            this.name = prod.Name;
-            this.type = prod.Type;
-            this.description = prod.Description;
-            this.prodClass = prod.ProductClass;
-            this.code = prod.ProductCode;
-            this.sku = prod.StockKeepingUnit;
-        }
+    private class ProductException extends Exception {
     }
 }
