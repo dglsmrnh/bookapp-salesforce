@@ -5,7 +5,7 @@ global with sharing class ClassIntegration {
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Class').getRecordTypeId();
 
     @HttpGet
-    global static String getAvailableClasses() {
+    global static GetResponse getAvailableClasses() {
         try {
             RestRequest req = RestContext.request;
 
@@ -27,14 +27,14 @@ global with sharing class ClassIntegration {
 
             String query = 'SELECT ' + fields + ' FROM Product2 WHERE isActive = true AND RecordTypeId =: PRODUCT_RECORDTYPE';
             List<Product2> productList = Database.query(query);
-              
-            GetResponse response = new GetResponse(productList);
-            return JSON.serialize(response);
+            
+            GetResponse responseString = new GetResponse(productList);
+
+            return responseString;
         }
         catch(Exception e) {
-            // RestResponse res = RestContext.response;
-            // res.statusCode = 500;
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            GetResponse res = new GetResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -47,10 +47,15 @@ global with sharing class ClassIntegration {
             this.success = true;
             this.classes = classes;
         }
+
+        global GetResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
+        }
     }
 
     @HttpPost
-    global static String saveClass(PostRequest request) {
+    global static PostResponse saveClass(PostRequest request) {
         try {
             String username = request.username;
             if(String.isEmpty(username)) {
@@ -81,10 +86,12 @@ global with sharing class ClassIntegration {
             account.DefaultClass__c = asset.Id;
             update account;
 
-            PostResponse response = new PostResponse(asset.Id);
-            return JSON.serialize(response);
+            PostResponse responseString = new PostResponse(asset.Id);
+            
+            return responseString;
         } catch (Exception e) {
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            PostResponse res = new PostResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -101,6 +108,11 @@ global with sharing class ClassIntegration {
         global PostResponse(Id id) {
             this.success = true;
             this.id = id;
+        }
+
+        global PostResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
         }
     }
 

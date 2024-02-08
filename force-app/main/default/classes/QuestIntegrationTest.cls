@@ -28,11 +28,8 @@ private class QuestIntegrationTest {
         request.addParameter('recommendation', 'true');
 
         RestContext.request = request;
-        String responseString = QuestIntegration.getAvailableQuests();
+        QuestIntegration.GetResponse response = QuestIntegration.getAvailableQuests();
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.GetResponse response = (QuestIntegration.GetResponse)JSON.deserialize(responseString, QuestIntegration.GetResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');
@@ -73,11 +70,8 @@ private class QuestIntegrationTest {
         request.requestBody = Blob.valueOf(JSON.serialize(postRequest));
         RestContext.request = request;
 
-        String responseString = QuestIntegration.createQuest(postRequest);
+        QuestIntegration.PostResponse response = QuestIntegration.createQuest(postRequest);
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.PostResponse response = (QuestIntegration.PostResponse)JSON.deserialize(responseString, QuestIntegration.PostResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');
@@ -136,11 +130,8 @@ private class QuestIntegrationTest {
         request.requestBody = Blob.valueOf(JSON.serialize(patchRequest));
         RestContext.request = request;
 
-        String responseString = QuestIntegration.updateQuest(patchRequest);
+        QuestIntegration.PatchResponse response = QuestIntegration.updateQuest(patchRequest);
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.PatchResponse response = (QuestIntegration.PatchResponse)JSON.deserialize(responseString, QuestIntegration.PatchResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');

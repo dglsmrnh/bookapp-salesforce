@@ -22,10 +22,8 @@ private class ClassIntegrationTest {
         request.addParameter('username', 'testUsername');
         RestContext.request = request;
 
-        String result = ClassIntegration.getAvailableClasses();
+        ClassIntegration.GetResponse response = ClassIntegration.getAvailableClasses();
 
-        // Deserialize the result and perform assertions (replace with your actual validation logic)
-        ClassIntegration.GetResponse response = (ClassIntegration.GetResponse)JSON.deserialize(result, ClassIntegration.GetResponse.class);
         System.assertEquals(true, response.success);
         System.assertNotEquals(null, response.classes);
 
@@ -53,10 +51,8 @@ private class ClassIntegrationTest {
         postRequest.classId = String.valueOf(testProduct.Id);
 
         // Call the REST endpoint
-        String result = ClassIntegration.saveClass(postRequest);
+        ClassIntegration.PostResponse response = ClassIntegration.saveClass(postRequest);
 
-        // Deserialize the result and perform assertions (replace with your actual validation logic)
-        ClassIntegration.PostResponse response = (ClassIntegration.PostResponse)JSON.deserialize(result, ClassIntegration.PostResponse.class);
         System.assertEquals(true, response.success);
         System.assertNotEquals(null, response.id);
 
