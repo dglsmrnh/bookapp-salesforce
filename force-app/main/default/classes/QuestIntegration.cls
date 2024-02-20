@@ -1,6 +1,5 @@
 @RestResource(urlMapping='/quest')
 global with sharing class QuestIntegration {
-    
     global static final Id ASSET_RECORDTYPE = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Book').getRecordTypeId();
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
