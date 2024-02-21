@@ -1,5 +1,6 @@
 @RestResource(urlMapping='/class')
 global with sharing class ClassIntegration {
+    // https://github.com/gazzola/corpus_readability_nlp_portuguese/tree/master?tab=readme-ov-file
     
     global static final Id ASSET_RECORDTYPE = Schema.SObjectType.Asset.getRecordTypeInfosByName().get('Class').getRecordTypeId();
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Class').getRecordTypeId();
