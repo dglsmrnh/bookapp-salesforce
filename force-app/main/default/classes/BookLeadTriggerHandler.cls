@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-21-2024
+ * @last modified by  : dglsmrnh
+**/
 public with sharing class BookLeadTriggerHandler extends TriggerHandler{
     public BookLeadTriggerHandler(System.TriggerOperation operation, List<BookLead__c> newRecordList, List<BookLead__c> oldRecordList, Map<Id, BookLead__c> newMap, Map<Id, BookLead__c> oldMap) {
     	super(operation, newRecordList, oldRecordList, newMap, oldMap);
@@ -29,7 +36,7 @@ public with sharing class BookLeadTriggerHandler extends TriggerHandler{
 		}
 
 		public override void afterUpdate(){
-
+			BookLeadHelper.convertLead((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap);
 		}
 
 		public override void beforeDelete(){
