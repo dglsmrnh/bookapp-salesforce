@@ -2,8 +2,8 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-21-2024
- * @last modified by  : dglsmrnh
+ * @last modified on  : 02-22-2024
+ * @last modified by  : douglas.marinho@globant.com
 **/
 public with sharing class BookLeadTriggerHandler extends TriggerHandler{
     public BookLeadTriggerHandler(System.TriggerOperation operation, List<BookLead__c> newRecordList, List<BookLead__c> oldRecordList, Map<Id, BookLead__c> newMap, Map<Id, BookLead__c> oldMap) {
@@ -28,11 +28,11 @@ public with sharing class BookLeadTriggerHandler extends TriggerHandler{
 		}
 
 		public override void afterInsert(){
-			BookLeadHelper.createApprovalProcess((Map<Id,BookLead__c>)newMap);
+			BookLeadHelper.submitToApproval((List<BookLead__c>)newRecordList);
 		}
 
 		public override void beforeUpdate(){
-
+			BookLeadHelper.changeOwner((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap)
 		}
 
 		public override void afterUpdate(){
