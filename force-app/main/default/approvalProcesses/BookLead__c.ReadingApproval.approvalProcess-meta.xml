@@ -13,6 +13,10 @@
         <allowDelegate>false</allowDelegate>
         <approvalActions>
             <action>
+                <name>ChangeBookLeadReadingFlag</name>
+                <type>FieldUpdate</type>
+            </action>
+            <action>
                 <name>ChangeBookLeadStatusWorking</name>
                 <type>FieldUpdate</type>
             </action>

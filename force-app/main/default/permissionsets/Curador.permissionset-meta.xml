@@ -72,6 +72,7 @@
         <enabled>true</enabled>
         <name>InitialClass__mdt</name>
     </customMetadataTypeAccesses>
+    <description>Permissões da curadoria</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.AccountNumber</field>
@@ -545,6 +546,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>BookLead__c.Book__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BookLead__c.PublishApproved__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BookLead__c.ReadingApproved__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
