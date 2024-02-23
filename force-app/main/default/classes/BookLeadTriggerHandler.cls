@@ -32,13 +32,13 @@ public with sharing class BookLeadTriggerHandler extends TriggerHandler{
 		}
 
 		public override void beforeUpdate(){
-			BookLeadHelper.changeOwner((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap)
+			BookLeadHelper.changeOwner((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap);
 		}
 
 		public override void afterUpdate(){
 			BookLeadHelper.automaticReadingApproval((List<BookLead__c>)oldRecordList, (List<BookLead__c>)newRecordList);
 			BookLeadHelper.automaticPublishApproval((List<BookLead__c>)oldRecordList, (List<BookLead__c>)newRecordList);
-			BookLeadHelper.convertLead((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap);
+			BookLeadHelper.convertLead((List<BookLead__c>)newRecordList);
 		}
 
 		public override void beforeDelete(){

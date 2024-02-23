@@ -6,6 +6,10 @@
     <picklistValues>
         <picklist>Family</picklist>
         <values>
+            <fullName>Color</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Device</fullName>
             <default>true</default>
         </values>

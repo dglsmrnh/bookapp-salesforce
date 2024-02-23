@@ -9,19 +9,19 @@ public with sharing class BookLeadHelper {
 
 	public static void changeOwner(Map<Id, BookLead__c> oldMap, Map<Id, BookLead__c> newMap) {
 
-		for(BookLead__c bk: newMap) {
-			if(bk.ReadingApproved = true && bk.Status__c == 'Working' && oldMap.get(bk.Id).Status__c != 'Working') {
-				bk.Owner = UserInfo.getUserId();
+		for(BookLead__c bk: newMap.values()) {
+			if(bk.ReadingApproved__c = true && bk.Status__c == 'Working' && oldMap.get(bk.Id).Status__c != 'Working') {
+				bk.OwnerId = UserInfo.getUserId();
 			}
 		}		
 	}
 
-	public static void convertLead(Map<Id, BookLead__c> oldMap, Map<Id, BookLead__c> newMap) {
+	public static void convertLead(List<BookLead__c> newRecordList) {
 		Set<Id> productIdList = new Set<Id>();
 		List<Product2> productList = new List<Product2>();
 
-		for(BookLead__c bk: newMap) {
-			if(bk.PublishApproved__c == true && bk.isAvailableToPublish__c = true) {
+		for(BookLead__c bk : newRecordList) {
+			if(bk.PublishApproved__c == true && bk.isAvailableToPublish__c == true) {
 				productIdList.add(bk.Book__c);
 			}
 		}
@@ -63,7 +63,7 @@ public with sharing class BookLeadHelper {
         Set<Id> setReprovedId = new Set<Id>();
 
         for(BookLead__c bk : newRecordList) {
-            if(bk.ReadingApproved == true) {
+            if(bk.ReadingApproved__c == true) {
                 setApprovedId.add(bk.Id);
             }
             else if(bk.Status__c == 'Closed - Not Converted') {
@@ -94,7 +94,6 @@ public with sharing class BookLeadHelper {
         if(!Test.isRunningTest()) {
             Approval.ProcessResult[] processResults = Approval.process(requests, true);
         }
-        update listContractItems;
         BookLeadTriggerHandler.enableTrigger();
     }
 
@@ -104,7 +103,7 @@ public with sharing class BookLeadHelper {
         Set<Id> setReprovedId = new Set<Id>();
 
         for(BookLead__c bk : newRecordList) {
-            if(bk.PublishApproved == true) {
+            if(bk.PublishApproved__c == true) {
                 setApprovedId.add(bk.Id);
             }
             else if(bk.Status__c == 'Closed - Not Converted') {
@@ -135,7 +134,6 @@ public with sharing class BookLeadHelper {
         if(!Test.isRunningTest()) {
             Approval.ProcessResult[] processResults = Approval.process(requests, true);
         }
-        update listContractItems;
         BookLeadTriggerHandler.enableTrigger();
     }
 
