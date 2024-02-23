@@ -22,13 +22,19 @@ public with sharing class BookLeadHelper {
 
 		for(BookLead__c bk : newRecordList) {
 			if(bk.PublishApproved__c == true && bk.isAvailableToPublish__c == true) {
-				productIdList.add(bk.Book__c);
+                if(bk.Book__c != null) {
+				    productIdList.add(bk.Book__c);
+                }
 			}
 		}
 
 		for(Id productId: productIdList) {
 			productList.add(new Product2(Id = productId, IsActive = true));
-		}		
+		}
+        
+        if(!productList.isEmpty()) {
+            update productList;
+        }
 	}
 
     public static void submitToApproval(List<BookLead__c> newRecordList) {
@@ -71,30 +77,7 @@ public with sharing class BookLeadHelper {
             }
         }
 
-        List<Approval.ProcessWorkitemRequest> requests = new List<Approval.ProcessWorkitemRequest> ();
-        
-        Map<Id, ProcessInstance> mapIdToProcessInstance = new Map<Id, ProcessInstance>([SELECT Id, TargetObjectId FROM ProcessInstance WHERE Status = 'Pending' AND ProcessDefinition.DeveloperName = 'ReadingApproval' AND (TargetObjectId IN: setApprovedId OR TargetObjectId IN: setReprovedId)]);
-
-        for(ProcessInstanceWorkItem workItem : [SELECT Id, ProcessInstanceId FROM ProcessInstanceWorkItem WHERE ProcessInstanceId IN :mapIdToProcessInstance.keySet()]){
-            Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
-            if (!setApprovedId.isEmpty()) {
-                if (setApprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
-                    req.setAction('Approve');
-                }
-            }
-            if (!setReprovedId.isEmpty()) {
-                if (setReprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
-                    req.setAction('Reject');
-                }
-            }
-            req.setWorkitemId(workItem.Id);
-            requests.add(req);
-        }
-        BookLeadTriggerHandler.disableTrigger();
-        if(!Test.isRunningTest()) {
-            Approval.ProcessResult[] processResults = Approval.process(requests, true);
-        }
-        BookLeadTriggerHandler.enableTrigger();
+        automaticApproval(setApprovedId, setReprovedId, 'ReadingApproval');
     }
 
     public static void automaticPublishApproval(List<BookLead__c> oldRecordList, List<BookLead__c> newRecordList) {
@@ -111,24 +94,31 @@ public with sharing class BookLeadHelper {
             }
         }
 
+        automaticApproval(setApprovedId, setReprovedId, 'PublishApproval');
+    }
+
+    public static void automaticApproval(Set<Id> setApprovedId, Set<Id> setReprovedId, String processDeveloperName) {
+        
         List<Approval.ProcessWorkitemRequest> requests = new List<Approval.ProcessWorkitemRequest> ();
         
-        Map<Id, ProcessInstance> mapIdToProcessInstance = new Map<Id, ProcessInstance>([SELECT Id, TargetObjectId FROM ProcessInstance WHERE Status = 'Pending' AND ProcessDefinition.DeveloperName = 'PublishApproval' AND (TargetObjectId IN: setApprovedId OR TargetObjectId IN: setReprovedId)]);
+        Map<Id, ProcessInstance> mapIdToProcessInstance = new Map<Id, ProcessInstance>([SELECT Id, TargetObjectId FROM ProcessInstance WHERE Status = 'Pending' AND ProcessDefinition.DeveloperName =: processDeveloperName AND (TargetObjectId IN: setApprovedId OR TargetObjectId IN: setReprovedId)]);
 
         for(ProcessInstanceWorkItem workItem : [SELECT Id, ProcessInstanceId FROM ProcessInstanceWorkItem WHERE ProcessInstanceId IN :mapIdToProcessInstance.keySet()]){
-            Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
-            if (!setApprovedId.isEmpty()) {
-                if (setApprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
-                    req.setAction('Approve');
+            if(workItem.ActorId != UserInfo.getUserId()) {
+                Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
+                if (!setApprovedId.isEmpty()) {
+                    if (setApprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
+                        req.setAction('Approve');
+                    }
                 }
-            }
-            if (!setReprovedId.isEmpty()) {
-                if (setReprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
-                    req.setAction('Reject');
+                if (!setReprovedId.isEmpty()) {
+                    if (setReprovedId.contains(mapIdToProcessInstance.get(workItem.ProcessInstanceId).TargetObjectId)) {
+                        req.setAction('Reject');
+                    }
                 }
+                req.setWorkitemId(workItem.Id);
+                requests.add(req);
             }
-            req.setWorkitemId(workItem.Id);
-            requests.add(req);
         }
         BookLeadTriggerHandler.disableTrigger();
         if(!Test.isRunningTest()) {
