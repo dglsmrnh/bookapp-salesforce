@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-24-2024
+ * @last modified by  : dglsmrnh
+**/
 public without sharing class AccountHelper {
     
     public static final Id PRODUCT_CLASS_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Class').getRecordTypeId();
@@ -10,7 +17,7 @@ public without sharing class AccountHelper {
                 account.Type = 'Child';
             }
             InitialClass__mdt initialClass = InitialClass__mdt.getInstance(account.Type);
-            classMap.put(account.Type, initialClass.ClassName__c);            
+            classMap.put(account.Type, initialClass.MasterLabel);            
         }
 
         List<Product2> productList = [SELECT Id, Name FROM Product2 WHERE Name IN: classMap.values() AND RecordTypeId =: PRODUCT_CLASS_RECORDTYPE];

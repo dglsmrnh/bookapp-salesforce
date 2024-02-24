@@ -12,13 +12,19 @@ global with sharing class BookLeadIntegration {
     // https://github.com/gazzola/corpus_readability_nlp_portuguese/tree/master?tab=readme-ov-file
     global static Response BookLeadIntegration(Request request) {
         try {
-            Product2 prd = request.book.serializeProduct();
-            insert prd;
+            if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() <= 0) {
+            //     throw new RecommendationException('Desculpe, esse livro já foi recomendado.');
+            // }
+                Product2 prd = request.book.serializeProduct();
+                insert prd;
 
-            BookLead__c bk = request.serializeLead(prd.Id);
-            insert bk;
+                BookLead__c bk = request.serializeLead(prd.Id);
+                insert bk;
 
+                linkCategories(request.book.categories, prd.Id);
+            }
             return new Response();
+
         } catch(Exception e) {
             return new Response(e.getMessage());
         }
@@ -106,6 +112,47 @@ global with sharing class BookLeadIntegration {
             this.success = false;
             this.message = message;
         }
+    }
+
+    private static void linkCategories(List<Category> categories, Id productId) {
+
+        // Get default catalog id to product type
+        DefaultCatalog__mdt defaultCatalog = DefaultCatalog__mdt.getInstance('Book');
+
+        Id catalogId;
+        List<ProductCatalog> catalogList = [SELECT Id FROM ProductCatalog WHERE Name =: defaultCatalog.MasterLabel LIMIT 1];
+        if(catalogList.isEmpty()) {
+            ProductCatalog catalog = new ProductCatalog(Name = defaultCatalog.MasterLabel);
+            insert catalog;
+            catalogId = catalog.Id;
+        }
+        else {
+            catalogId = catalogList[0].Id;
+        }
+
+        // save categories
+        List<ProductCategory> categoryList = new List<ProductCategory>();
+
+        for(Category category : categories) {
+            categoryList.add(new ProductCategory(Name = category.name, CatalogId = catalogId, ExternalId__c = category.name));
+        }
+
+        if(!categoryList.IsEmpty()) {
+            Database.upsert(categoryList, ProductCategory.ExternalId__c, false);
+        }
+
+        List<ProductCategoryProduct> prdCategoryList = new List<ProductCategoryProduct>();
+
+        for(ProductCategory category : categoryList) {
+            prdCategoryList.add(new ProductCategoryProduct(ProductCategoryId = category.Id, ProductId = productId));
+        }
+
+        if(!prdCategoryList.IsEmpty()) {
+            insert prdCategoryList;
+        }
+    }
+
+    private class RecommendationException extends Exception {
     }
     
 }
