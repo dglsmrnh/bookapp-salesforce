@@ -5,7 +5,7 @@ global with sharing class QuestIntegration {
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
     @HttpGet
-    global static String getAvailableQuests() {
+    global static GetResponse getAvailableQuests() {
         try {
             RestRequest req = RestContext.request;
 
@@ -38,13 +38,14 @@ global with sharing class QuestIntegration {
             for(Product2 product : productList) {
                 questList.add(new Quest(product, false));
             }    
-            GetResponse response = new GetResponse(questList);
-            return JSON.serialize(response);
+            
+            GetResponse responseString = new GetResponse(questList);
+   
+            return responseString;
         }
         catch(Exception e) {
-            // RestResponse res = RestContext.response;
-            // res.statusCode = 500;
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            GetResponse res = new GetResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -56,6 +57,11 @@ global with sharing class QuestIntegration {
         global GetResponse(List<Quest> quests) {
             this.success = true;
             this.quests = quests;
+        }
+
+        global GetResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
         }
     }
 
@@ -72,7 +78,7 @@ global with sharing class QuestIntegration {
     }    
 
     @HttpPost
-    global static String createQuest(PostRequest request) {
+    global static PostResponse createQuest(PostRequest request) {
         try {
             String username = request.username;
             if(String.isEmpty(username)) {
@@ -101,9 +107,11 @@ global with sharing class QuestIntegration {
             insert asset;
 
             PostResponse response = new PostResponse(asset.Id);
-            return JSON.serialize(response);
+
+            return response;
         } catch (Exception e) {
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            PostResponse res = new PostResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -121,10 +129,15 @@ global with sharing class QuestIntegration {
             this.success = true;
             this.id = id;
         }
+
+        global PostResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
+        }
     }
 
     @HttpPatch
-    global static String updateQuest(PatchRequest request) {
+    global static PatchResponse updateQuest(PatchRequest request) {
         try {
             String username = request.username;
             if(String.isEmpty(username)) {
@@ -175,9 +188,10 @@ global with sharing class QuestIntegration {
             response.currentChapter = currentChapter;
             response.currentPage = currentPage;
 
-            return JSON.serialize(response);
+            return response;
         } catch (Exception e) {
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            PatchResponse res = new PatchResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -247,6 +261,11 @@ global with sharing class QuestIntegration {
             this.id = questId;
             this.hasCheckpoint = false;
             this.capped = false;            
+        }
+
+        global PatchResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
         }
     }
 
