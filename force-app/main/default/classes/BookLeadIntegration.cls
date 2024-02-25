@@ -10,6 +10,7 @@ global with sharing class BookLeadIntegration {
 
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
     // https://github.com/gazzola/corpus_readability_nlp_portuguese/tree/master?tab=readme-ov-file
+    @HttpPost
     global static Response BookLeadIntegration(Request request) {
         try {
             if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() <= 0) {

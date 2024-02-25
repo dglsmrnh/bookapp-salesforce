@@ -34,7 +34,7 @@ private class QuestIntegrationTest {
         RestRequest request = new RestRequest();
         request.requestURI = '/services/apexrest/quests';
         request.httpMethod = 'GET';
-        request.addParameter('username', 'testUsername');
+        request.addParameter('username', 'testuser');
         request.addParameter('recommendation', 'true');
 
         RestContext.request = request;
@@ -77,7 +77,7 @@ private class QuestIntegrationTest {
         request.httpMethod = 'POST';
 
         QuestIntegration.PostRequest postRequest = new QuestIntegration.PostRequest();
-        postRequest.username = 'testUsername';
+        postRequest.username = 'testuser';
         postRequest.id = testProduct.Id;
 
         request.requestBody = Blob.valueOf(JSON.serialize(postRequest));
@@ -140,7 +140,7 @@ private class QuestIntegrationTest {
         request.httpMethod = 'PATCH';
 
         QuestIntegration.PatchRequest patchRequest = new QuestIntegration.PatchRequest();
-        patchRequest.username = 'testUsername';
+        patchRequest.username = 'testuser';
         patchRequest.id = testAsset.Id;
         patchRequest.currentChapter = 2;
 

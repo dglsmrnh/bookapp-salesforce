@@ -22,13 +22,6 @@ private class AccountIntegrationTest {
         requestBody.account.gender = 'Male';
         requestBody.account.birthdate = Date.newInstance(2000, 1, 1);
 
-        // Character data
-        requestBody.character = new AccountIntegration.CharacterDataObject();
-        requestBody.character.name = 'Test Character';
-        requestBody.character.classId = 'TestClassId';
-        requestBody.character.raceId = 'TestRaceId';
-        requestBody.character.colorId = 'TestColorId';
-
         // Create test Product2 records
         List<Product2> productList = new List<Product2>{
             new Product2(
@@ -48,6 +41,13 @@ private class AccountIntegrationTest {
             )
         };
         insert productList;
+
+        // Character data
+        requestBody.character = new AccountIntegration.CharacterDataObject();
+        requestBody.character.name = 'Test Character';
+        requestBody.character.classId = productList[0].Id;
+        requestBody.character.raceId = productList[1].Id;
+        requestBody.character.colorId = productList[2].Id;
 
         // Perform the HTTP callout
         Test.startTest();
@@ -117,6 +117,10 @@ private class AccountIntegrationTest {
             )
         };
         insert assetList;
+
+        RestRequest testReq = new RestRequest();
+        testReq.params.put('username', 'testuser');
+        RestContext.request = testReq;
 
         // Perform the HTTP callout
         Test.startTest();

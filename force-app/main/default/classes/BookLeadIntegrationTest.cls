@@ -16,7 +16,8 @@ private class BookLeadIntegrationTest {
             Username__c = 'testuser',
             Password__c = 'Password@123',
             Gender__c = 'Male',
-            Birthday__c = Date.newInstance(2000, 1, 1)
+            Birthday__c = Date.newInstance(2000, 1, 1),
+            Type = 'Professor'
         );
         insert testAccount;
 
