@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @isTest
 private class QuestIntegrationTest {
 
@@ -6,8 +13,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -44,8 +54,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -84,8 +97,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 

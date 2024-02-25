@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-24-2024
+ * @last modified on  : 02-25-2024
  * @last modified by  : dglsmrnh
 **/
 @isTest
@@ -12,8 +12,11 @@ private class BookLeadIntegrationTest {
         // Create test data for the account
         Account testAccount = new Account(
             Name = 'Test Account',
-            Type = 'Child'
-            // Add any other required fields
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -41,7 +44,7 @@ private class BookLeadIntegrationTest {
         request.colemanLiau = 8.2;
         request.flesch = 75.3;
         request.gulpease = 60.7;
-        request.status = 'Pending';
+        request.status = 'Open';
 
         Test.startTest();
         // Call the method to be tested

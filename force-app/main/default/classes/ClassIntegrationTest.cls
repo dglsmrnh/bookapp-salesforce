@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 02-24-2024
+ * @last modified on  : 02-25-2024
  * @last modified by  : dglsmrnh
 **/
 @isTest
@@ -15,8 +15,11 @@ private class ClassIntegrationTest {
         // Create test data (replace with your actual test data creation logic)
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -44,8 +47,11 @@ private class ClassIntegrationTest {
         // Create test data (replace with your actual test data creation logic)
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 

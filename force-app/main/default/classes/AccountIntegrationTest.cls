@@ -18,7 +18,7 @@ private class AccountIntegrationTest {
         requestBody.account.name = 'Test Account';
         requestBody.account.email = 'test@example.com';
         requestBody.account.username = 'testuser';
-        requestBody.account.password = 'testpassword';
+        requestBody.account.password = 'Password@123';
         requestBody.account.gender = 'Male';
         requestBody.account.birthdate = Date.newInstance(2000, 1, 1);
 
@@ -66,7 +66,7 @@ private class AccountIntegrationTest {
             Name = 'Test Account',
             Email__c = 'test@example.com',
             Username__c = 'testuser',
-            Password__c = 'testpassword',
+            Password__c = 'Password@123',
             Gender__c = 'Male',
             Birthday__c = Date.newInstance(2000, 1, 1)
         );
