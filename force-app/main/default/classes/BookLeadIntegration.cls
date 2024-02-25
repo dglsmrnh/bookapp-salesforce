@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-24-2024
+ * @last modified on  : 02-25-2024
  * @last modified by  : dglsmrnh
 **/
 @RestResource(urlMapping='/recommendation')
@@ -105,7 +105,6 @@ global with sharing class BookLeadIntegration {
 
         global Response() {
             this.success = true;
-            this.message = message;
         }
 
         global Response(String message) {
@@ -138,7 +137,7 @@ global with sharing class BookLeadIntegration {
         }
 
         if(!categoryList.IsEmpty()) {
-            Database.upsert(categoryList, ProductCategory.ExternalId__c, false);
+            Database.upsert(categoryList, ProductCategory.ExternalId__c, true);
         }
 
         List<ProductCategoryProduct> prdCategoryList = new List<ProductCategoryProduct>();

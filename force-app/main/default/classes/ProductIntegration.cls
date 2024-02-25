@@ -1,7 +1,14 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @RestResource(urlMapping='/product')
 global with sharing class ProductIntegration {
     @HttpGet
-    global static String getProducts() {
+    global static ResponseBodyObject getProducts() {
         try {
             RestRequest thisReq = RestContext.request;
 
@@ -32,12 +39,10 @@ global with sharing class ProductIntegration {
                 throw new ProductException('No records with the selected type were found.');
             }
 
-            return JSON.serialize(responseBody);
+            return responseBody;
         }
         catch(Exception e) {
-            ResponseBodyObject responseBody = new ResponseBodyObject(e.getMessage());
-
-            return JSON.serialize(responseBody);
+            return new ResponseBodyObject(e.getMessage());
         }
     }
 

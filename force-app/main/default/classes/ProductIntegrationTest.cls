@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @isTest
 public with sharing class ProductIntegrationTest {
     @TestSetup
@@ -27,12 +34,12 @@ public with sharing class ProductIntegrationTest {
             RestRequest testReq = new RestRequest();
             testReq.params.put('type', recType.Name);
             RestContext.request = testReq;
-            String prodResponse = ProductIntegration.getProducts();
+            ProductIntegration.ResponseBodyObject prodResponse = ProductIntegration.getProducts();
         }
 
         RestRequest testReq = new RestRequest();
         testReq.params.put('type', 'UnkownTypeTotallyNotReal');
         RestContext.request = testReq;
-        String prodResponse2 = ProductIntegration.getProducts();
+        ProductIntegration.ResponseBodyObject prodResponse2 = ProductIntegration.getProducts();
     }
 }

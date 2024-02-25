@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @RestResource(urlMapping='/account')
 global with sharing class AccountIntegration {
 
@@ -13,88 +20,36 @@ global with sharing class AccountIntegration {
     global static final Id PRODUCT_BOOK_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
     @HttpPost
-    global static String postAccountWithCharacter() {
+    global static PostResponseBodyObject postAccountWithCharacter(PostRequestBody request) {
         try {
-            RestRequest thisReq = RestContext.request;
-            List<PostResponseBodyObject> responseBody = new List<PostResponseBodyObject>();
-            List<Account> accountInsertList = new List<Account>();
-            List<Asset> assetInsertList = new List<Asset>();
+            Set<String> productCodeList = new Set<String>();            
+            productCodeList.add(request.character.classId);
+            productCodeList.add(request.character.raceId);
+            productCodeList.add(request.character.colorId);
 
-            List<PostRequestBody> requestBodyAsList = (List<PostRequestBody>) JSON.deserialize(thisReq.requestBody.toString(), List<PostRequestBody>.Class);
-            Set<String> productCodeList = new Set<String>();
+            Account newAccount = request.account.serializeAccount();
+            Database.upsert(newAccount, Account.Username__c);
+
+            Map<String, Asset> assetInsertMap = request.character.serializeAssets(newAccount, request.account.username);
+            Database.UpsertResult[] resultList = Database.upsert(assetInsertMap.values(), Asset.ExternalId__c);
+
+            newAccount.DefaultClass__c = assetInsertMap.get('Class').Id;
+            newAccount.DefaultRace__c = assetInsertMap.get('Race').Id;
+            newAccount.DefaultColor__c = assetInsertMap.get('Color').Id;
+            update newAccount;
             
-            for(PostRequestBody reqBody : requestBodyAsList) {
-                productCodeList.add(reqBody.character.classId);
-                productCodeList.add(reqBody.character.raceId);
-                productCodeList.add(reqBody.character.colorId);
-            }
+            PostResponseBodyObject newResponse = new PostResponseBodyObject();
+            newResponse.id = newAccount.Id;            
 
-            Map<String, Product2> mapProductCodeToProduct = new Map<String, Product2>();
-            for(Product2 prod : [SELECT Id, ProductCode FROM Product2 WHERE ProductCode IN: productCodeList]) {
-                if(!mapProductCodeToProduct.containsKey(prod.ProductCode)) {
-                    mapProductCodeToProduct.put(prod.ProductCode, prod);
-                }
-            }
-
-            for(PostRequestBody bodyObj : requestBodyAsList) {
-                Account newAccount = new Account();
-                newAccount.Name = bodyObj.account.name;
-                //newAccount.CharacterName__c = bodyObj.character.name;
-                newAccount.Email__c = bodyObj.account.email;
-                newAccount.Gender__c = bodyObj.account.gender;
-                newAccount.Birthday__c = bodyObj.account.birthdate;
-                newAccount.Username__c = bodyObj.account.username;
-                newAccount.Password__c = bodyObj.account.password;
-                accountInsertList.add(newAccount);
-
-                if(String.isNotBlank(bodyObj.character.classId)) {
-                    Asset classAsset = new Asset();
-                    classAsset.Account = newAccount;
-                    classAsset.Product2 = mapProductCodeToProduct.get(bodyObj.character.classId);
-                    assetInsertList.add(classAsset);
-                }
-
-                if(String.isNotBlank(bodyObj.character.raceId)) {
-                    Asset raceAsset = new Asset();
-                    raceAsset.Account = newAccount;
-                    raceAsset.Product2 = mapProductCodeToProduct.get(bodyObj.character.raceId);
-                    assetInsertList.add(raceAsset);
-                }
-
-                if(String.isNotBlank(bodyObj.character.colorId)) {
-                    Asset colorAsset = new Asset();
-                    colorAsset.Account = newAccount;
-                    colorAsset.Product2 = mapProductCodeToProduct.get(bodyObj.character.colorId);
-                    assetInsertList.add(colorAsset);
-                }
-            }
-
-            Database.insert(accountInsertList, true);
-            Database.insert(assetInsertList, true);
-
-            for(Account acc : accountInsertList) {
-                PostResponseBodyObject newResponse = new PostResponseBodyObject();
-                if(acc.Id != null) {
-                    newResponse.id = acc.Id;
-                    newResponse.success = true;
-                }
-                else {
-                    newResponse.success = false;
-                    newResponse.message = 'An error ocurred while tring to insert the account with the name ' + acc.Name;
-                }
-                responseBody.add(newResponse);
-            }
-
-            return JSON.serialize(responseBody);
+            return newResponse;
         }
         catch(Exception e) {
-            ErrorResponse responseBody = new ErrorResponse(e.getMessage());
-            return JSON.serialize(responseBody);
+            return new PostResponseBodyObject(e.getMessage());
         }
     }
 
     @Httpget
-    global static String getAccountAndCharacter() {
+    global static GetResponseBodyObject getAccountAndCharacter() {
         try {
             GetResponseBodyObject responseBody = new GetResponseBodyObject();
             RestRequest thisReq = RestContext.request;
@@ -103,72 +58,56 @@ global with sharing class AccountIntegration {
             if(!requestParams.containsKey('username')) {
                 throw new CalloutException('The parameter "username" could not be found on your request.');
             }
-            String username = requestParams.get('username');
-
-            String fields = String.join(IntegrationUtils.getFields('Account'), ', ');
-
-            String query = 'SELECT ' + fields + ' FROM Account WHERE Username__c =: username';
             
+            String username = requestParams.get('username');
+            String fields = String.join(IntegrationUtils.getFields('Account'), ', ');
+            String query = 'SELECT ' + fields + ' FROM Account WHERE Username__c =: username';            
             List<Account> accountList = Database.query(query);
 
             if(accountList.size() <= 0) {
                 throw new CalloutException('No account with the username ' + username + ' could be found.');
             }
 
-            String questFields = String.join(IntegrationUtils.getFields('Product2'), ', ');
-            String questQuery = 'SELECT ' + questFields + ' FROM Product2 WHERE Id IN (SELECT Product2Id FROM Asset WHERE Account.Username__c = \'' + username + '\') AND isActive = true AND RecordType.Name = \'Book\'';
-            List<Product2> productList = Database.query(questQuery);
-            
-            List<Quest> questList = new List<Quest>();
+            String assetFields = String.join(IntegrationUtils.getFields('Asset'), ', ');
+            String assetQuery = 'SELECT ' + assetFields + ' FROM Asset WHERE Account.Username__c = \'' + username + '\'';
+            List<Asset> assetList = Database.query(assetQuery);
 
-            for(Product2 product : productList) {
-                questList.add(new Quest(product, false));
-            }    
+            Map<Id, Asset> assetMap = new Map<Id, Asset>();
 
-            List<Asset> assetList = [SELECT Id, RecordType.Name, Product2Id FROM Asset WHERE Account.Username__c =: username];
-            Map<String, Asset> mapNameToAsset = new Map<String, Asset>();
-            List<Asset> attributeList = new List<Asset>();
+            for(Asset asset : assetList) {
+                assetMap.put(asset.Product2Id, asset);
+            }
 
-            for(Asset ass : assetList) {
-                if(ass.RecordType.Name != 'Attribute') {
-                    mapNameToAsset.put(ass.RecordType.Name, ass);
+            String productFields = String.join(IntegrationUtils.getFields('Product2'), ', ');
+            String productQuery = 'SELECT ' + productFields + ' FROM Product2 WHERE Id IN (SELECT Product2Id FROM Asset WHERE Account.Username__c = \'' + username + '\')';
+            List<Product2> productList = Database.query(productQuery);
+
+            List<AssetData> questList = new List<AssetData>();
+            List<AssetData> attrList = new List<AssetData>();
+            Map<Id, AssetData> assetDataMap = new Map<Id, AssetData>();
+
+            for(Product2 prd : productList) {
+                assetDataMap.put(assetMap.get(prd.Id).Id, new AssetData(assetMap.get(prd.Id), prd));
+
+                if(prd.RecordTypeId == PRODUCT_BOOK_RECORDTYPE) {
+                    questList.add(new AssetData(assetMap.get(prd.Id), prd));
                 }
-                else {
-                    attributeList.add(ass);
+
+                if(prd.RecordTypeId == PRODUCT_ATTRIBUTE_RECORDTYPE) {
+                    attrList.add(new AssetData(assetMap.get(prd.Id), prd));
                 }
             }
 
             for(Account acc : accountList) {
-                responseBody.account.name = acc.Name;
-                responseBody.account.email = acc.Email__c;
-                responseBody.account.username = acc.Username__c;
-                responseBody.account.password = acc.Password__c;
-                responseBody.account.gender = acc.Gender__c;
-                responseBody.account.birthdate = acc.Birthday__c;
-                //responseBody.character.name = acc.CharacterName__c;
-                //responseBody.character.level = acc.Level__c;
-                //responseBody.character.levelUp = acc.LevelUp__c;
-                //responseBody.character.xp = acc.Xp__c;
-                //responseBody.character.bonusXp = acc.BonusXp__c;
-                //responseBody.character.lostXp = acc.LostXp__c;
-                //responseBody.character.level_cap = acc.LevelCap__c;
-                //responseBody.character.coins = acc.Coins__c;
-                //responseBody.character.attribute_points = acc.AttributePoints__c;
-                responseBody.character.c_class = mapNameToAsset.containsKey('Class') ? mapNameToAsset.get('Class') : null;
-                responseBody.character.race = mapNameToAsset.containsKey('Race') ? mapNameToAsset.get('Race') : null;
-                responseBody.character.color = mapNameToAsset.containsKey('Color') ? mapNameToAsset.get('Color') : null;
-                responseBody.character.attributes = attributeList.size() > 0 ? attributeList : null;
-                responseBody.character.quests = questList.size() > 0 ? questList : null;
-                //responseBody.character.inventory = mapNameToAsset.containsKey('Color') ? mapNameToAsset.get('Color') : null;
+
+                responseBody.account.serializeAccountData(acc);
+                responseBody.character.serializeAssetData(acc, assetDataMap, questList, attrList);
             }
 
-            responseBody.success = true;
-            responseBody.message = null;
-            return JSON.serialize(responseBody);
+            return responseBody;
         }
         catch (Exception e) {
-            ErrorResponse responseBody = new ErrorResponse(e.getMessage());
-            return JSON.serialize(responseBody);
+            return new GetResponseBodyObject(e.getMessage());
         }
     }
 
@@ -179,6 +118,40 @@ global with sharing class AccountIntegration {
         global String password;
         global String gender;
         global Date birthdate;
+
+        public Account serializeAccount() {
+            Account newAccount = new Account();
+            newAccount.Name = this.name;
+            //newAccount.CharacterName__c = request.character.name;
+            newAccount.Email__c = this.email;
+            newAccount.Gender__c = this.gender;
+            newAccount.Birthday__c = this.birthdate;
+            newAccount.Username__c = this.username;
+            newAccount.Password__c = this.password;
+
+            return newAccount;
+        }
+
+        public void serializeAccountData(Account acc) {
+            this.name = acc.Name;
+            this.email = acc.Email__c;
+            this.username = acc.Username__c;
+            this.password = acc.Password__c;
+            this.gender = acc.Gender__c;
+            this.birthdate = acc.Birthday__c;
+        }
+    }
+
+    global class AssetData {
+        global String id;
+        global Asset asset;
+        global Product2 product;
+
+        public AssetData(Asset asset, Product2 product) {
+            this.id = asset.Id;
+            this.asset = asset;
+            this.product = product;
+        }
     }
 
     global class CharacterDataObject {
@@ -194,35 +167,73 @@ global with sharing class AccountIntegration {
         global Integer level_cap;
         global Integer coins;
         global Integer attribute_points;
-        Asset c_class;
-        Asset race;
-        Asset color;
-        global List<Asset> attributes;
-        global List<Asset> inventory;
-        global List<Quest> quests;
+        global AssetData c_class;
+        global AssetData race;
+        global AssetData color;
+        global List<AssetData> attributes;
+        // global List<Asset> inventory;
+        global List<AssetData> quests;
+
+        public Map<String, Asset> serializeAssets(Account newAccount, String username) {
+            Map<String, Asset> assetInsertMap = new  Map<String, Asset>();
+
+            if(String.isNotBlank(this.classId)) {
+                Asset classAsset = new Asset();
+                classAsset.Account = newAccount;
+                classAsset.Product2Id = Id.valueOf(this.classId);
+                classAsset.ExternalId__c = this.classId + username;
+                classAsset.RecordTypeId = ASSET_CLASS_RECORDTYPE;
+                assetInsertMap.put('Class', classAsset);
+            }
+
+            if(String.isNotBlank(this.raceId)) {
+                Asset raceAsset = new Asset();
+                raceAsset.Account = newAccount;
+                raceAsset.Product2Id = Id.valueOf(this.raceId);
+                raceAsset.ExternalId__c = this.raceId + username;
+                raceAsset.RecordTypeId = ASSET_RACE_RECORDTYPE;
+                assetInsertMap.put('Race', raceAsset);
+            }
+
+            if(String.isNotBlank(this.colorId)) {
+                Asset colorAsset = new Asset();
+                colorAsset.Account = newAccount;
+                colorAsset.Product2Id = Id.valueOf(this.colorId);
+                colorAsset.ExternalId__c = this.colorId + username;
+                colorAsset.RecordTypeId = ASSET_COLOR_RECORDTYPE;
+                assetInsertMap.put('Color', colorAsset);
+            }
+
+            return assetInsertMap;
+        }
+
+        public void serializeAssetData(Account acc, Map<Id, AssetData> assetDataMap, List<AssetData> questList, List<AssetData> attrList) {
+            this.c_class = acc.DefaultClass__c != null ? assetDataMap.get(acc.DefaultClass__c) : null;
+            this.race = acc.DefaultRace__c != null ? assetDataMap.get(acc.DefaultRace__c) : null;
+            this.color = acc.DefaultColor__c != null ? assetDataMap.get(acc.DefaultColor__c) : null;
+            this.attributes = questList.size() > 0 ? questList : null;
+            this.quests = attrList.size() > 0 ? attrList : null;
+        }
     }
 
     global class PostRequestBody {
-        AccountDataObject account;
-        CharacterDataObject character;
-    }
-
-    global class Quest {
-        global String id;
-        global Product2 info;
-        global Boolean recommendation;
-
-        global Quest(Product2 product, Boolean recommendation) {
-            this.id = product.id;
-            this.info = product;
-            this.recommendation = recommendation;
-        }
-    }  
+        global AccountDataObject account;
+        global CharacterDataObject character;
+    } 
 
     global class PostResponseBodyObject {
         global Boolean success;
         global String message;
         global String id;
+
+        global PostResponseBodyObject() {
+            this.success = true;
+        }
+        
+        global PostResponseBodyObject(String message) {
+            this.success = false;
+            this.message = message;
+        }
     }
 
     global class GetResponseBodyObject {
@@ -230,17 +241,16 @@ global with sharing class AccountIntegration {
         global String message;
         global AccountDataObject account = new AccountDataObject();
         global CharacterDataObject character = new CharacterDataObject();
-    }
 
-    global class ErrorResponse {
-        global Boolean success;
-        global String message;
+        global GetResponseBodyObject() {
+            this.success = true;
+        }
 
-        global ErrorResponse(String message) {
+        global GetResponseBodyObject(String message) {
             this.success = false;
             this.message = message;
         }
-    } 
+    }
 
     private class AccountException extends Exception {
     }
