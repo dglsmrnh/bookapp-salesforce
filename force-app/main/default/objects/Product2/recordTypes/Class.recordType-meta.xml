@@ -10,6 +10,10 @@
             <default>true</default>
         </values>
         <values>
+            <fullName>Color</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>None</fullName>
             <default>false</default>
         </values>

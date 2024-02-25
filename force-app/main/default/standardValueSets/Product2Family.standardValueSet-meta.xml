@@ -36,4 +36,9 @@
         <default>false</default>
         <label>Race</label>
     </standardValue>
+    <standardValue>
+        <fullName>Color</fullName>
+        <default>false</default>
+        <label>Color</label>
+    </standardValue>
 </StandardValueSet>

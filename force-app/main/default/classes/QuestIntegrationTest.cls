@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @isTest
 private class QuestIntegrationTest {
 
@@ -6,8 +13,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -24,15 +34,12 @@ private class QuestIntegrationTest {
         RestRequest request = new RestRequest();
         request.requestURI = '/services/apexrest/quests';
         request.httpMethod = 'GET';
-        request.addParameter('username', 'testUsername');
+        request.addParameter('username', 'testuser');
         request.addParameter('recommendation', 'true');
 
         RestContext.request = request;
-        String responseString = QuestIntegration.getAvailableQuests();
+        QuestIntegration.GetResponse response = QuestIntegration.getAvailableQuests();
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.GetResponse response = (QuestIntegration.GetResponse)JSON.deserialize(responseString, QuestIntegration.GetResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');
@@ -47,8 +54,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -67,17 +77,14 @@ private class QuestIntegrationTest {
         request.httpMethod = 'POST';
 
         QuestIntegration.PostRequest postRequest = new QuestIntegration.PostRequest();
-        postRequest.username = 'testUsername';
+        postRequest.username = 'testuser';
         postRequest.id = testProduct.Id;
 
         request.requestBody = Blob.valueOf(JSON.serialize(postRequest));
         RestContext.request = request;
 
-        String responseString = QuestIntegration.createQuest(postRequest);
+        QuestIntegration.PostResponse response = QuestIntegration.createQuest(postRequest);
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.PostResponse response = (QuestIntegration.PostResponse)JSON.deserialize(responseString, QuestIntegration.PostResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');
@@ -90,8 +97,11 @@ private class QuestIntegrationTest {
         // Test data setup
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -109,7 +119,8 @@ private class QuestIntegrationTest {
             CurrentChapter__c = 1,
             CurrentPage__c = 5,
             Name = 'Test Product',
-            RecordTypeId = QuestIntegration.ASSET_RECORDTYPE
+            RecordTypeId = QuestIntegration.ASSET_RECORDTYPE,
+            ExternalId__c = testProduct.Id + testAccount.Username__c
             // Add other required fields
         );
         insert testAsset;
@@ -129,18 +140,15 @@ private class QuestIntegrationTest {
         request.httpMethod = 'PATCH';
 
         QuestIntegration.PatchRequest patchRequest = new QuestIntegration.PatchRequest();
-        patchRequest.username = 'testUsername';
+        patchRequest.username = 'testuser';
         patchRequest.id = testAsset.Id;
         patchRequest.currentChapter = 2;
 
         request.requestBody = Blob.valueOf(JSON.serialize(patchRequest));
         RestContext.request = request;
 
-        String responseString = QuestIntegration.updateQuest(patchRequest);
+        QuestIntegration.PatchResponse response = QuestIntegration.updateQuest(patchRequest);
         Test.stopTest();
-
-        // Deserialize the response
-        QuestIntegration.PatchResponse response = (QuestIntegration.PatchResponse)JSON.deserialize(responseString, QuestIntegration.PatchResponse.class);
 
         // Assertions
         System.assert(response != null, 'Response should not be null');

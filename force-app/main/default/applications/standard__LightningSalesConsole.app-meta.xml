@@ -8,30 +8,33 @@
     <label>Sales Console</label>
     <navType>Console</navType>
     <tabs>standard-home</tabs>
-    <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
     <tabs>standard-Contact</tabs>
-    <tabs>standard-Opportunity</tabs>
-    <tabs>standard-Campaign</tabs>
+    <tabs>BookLead__c</tabs>
+    <tabs>standard-Product2</tabs>
+    <tabs>standard-ProductCategory</tabs>
     <tabs>standard-Task</tabs>
+    <tabs>standard-ProcessInstanceWorkitem</tabs>
+    <tabs>standard-Asset</tabs>
     <tabs>standard-Event</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <tabs>standard-Feed</tabs>
     <tabs>standard-CollaborationGroup</tabs>
     <tabs>standard-File</tabs>
-    <tabs>ProductChildren__c</tabs>
+    <tabs>standard-Opportunity</tabs>
+    <tabs>standard-Order</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>LightningSalesConsole_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>ProductChildren__c</tab>
+            <tab>BookLead__c</tab>
         </mappings>
         <mappings>
             <tab>standard-Account</tab>
         </mappings>
         <mappings>
-            <tab>standard-Campaign</tab>
+            <tab>standard-Asset</tab>
         </mappings>
         <mappings>
             <tab>standard-CollaborationGroup</tab>
@@ -52,10 +55,19 @@
             <tab>standard-File</tab>
         </mappings>
         <mappings>
-            <tab>standard-Lead</tab>
+            <tab>standard-Opportunity</tab>
         </mappings>
         <mappings>
-            <tab>standard-Opportunity</tab>
+            <tab>standard-Order</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-ProcessInstanceWorkitem</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-Product2</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-ProductCategory</tab>
         </mappings>
         <mappings>
             <tab>standard-Task</tab>

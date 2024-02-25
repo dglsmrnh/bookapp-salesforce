@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @RestResource(urlMapping='/quest')
 global with sharing class QuestIntegration {
     
@@ -5,23 +12,15 @@ global with sharing class QuestIntegration {
     global static final Id PRODUCT_RECORDTYPE = Schema.SObjectType.Product2.getRecordTypeInfosByName().get('Book').getRecordTypeId();
 
     @HttpGet
-    global static String getAvailableQuests() {
+    global static GetResponse getAvailableQuests() {
         try {
             RestRequest req = RestContext.request;
-
-            if(!req.params.containsKey('username')) {
-                throw new QuestException('username parameter not found.');
-            }
 
             String username = req.params.get('username');
             Boolean recommendation = false;
 
             if(req.params.containsKey('recommendation')) {
                 recommendation = Boolean.valueOf(req.params.get('recommendation'));
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new QuestException('username\'s account not found.');
             }
 
             String fields = String.join(IntegrationUtils.getFields('Product2'), ', ');
@@ -38,13 +37,14 @@ global with sharing class QuestIntegration {
             for(Product2 product : productList) {
                 questList.add(new Quest(product, false));
             }    
-            GetResponse response = new GetResponse(questList);
-            return JSON.serialize(response);
+            
+            GetResponse responseString = new GetResponse(questList);
+   
+            return responseString;
         }
         catch(Exception e) {
-            // RestResponse res = RestContext.response;
-            // res.statusCode = 500;
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            GetResponse res = new GetResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -56,6 +56,11 @@ global with sharing class QuestIntegration {
         global GetResponse(List<Quest> quests) {
             this.success = true;
             this.quests = quests;
+        }
+
+        global GetResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
         }
     }
 
@@ -72,24 +77,16 @@ global with sharing class QuestIntegration {
     }    
 
     @HttpPost
-    global static String createQuest(PostRequest request) {
+    global static PostResponse createQuest(PostRequest request) {
         try {
             String username = request.username;
-            if(String.isEmpty(username)) {
-                throw new QuestException('username parameter not found.');
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new QuestException('user not found.');
-            }
-
             Id questId = Id.valueOf(request.id);
 
             if([SELECT Id FROM Product2 WHERE Id =: questId AND IsActive = true].size() < 1) {
-                throw new QuestException('quest not available.');
+                throw new CalloutException('quest not available.');
             }
 
-            Account account = [SELECT Id FROM Account WHERE Username__c =: username];
+            Account account = [SELECT Id, Username__c FROM Account WHERE Username__c =: username];
             Product2 product = [SELECT Id, Name FROM Product2 WHERE Id =: questId AND IsActive = true];
 
             Asset asset = new Asset();
@@ -97,13 +94,16 @@ global with sharing class QuestIntegration {
             asset.Product2Id = questId;
             asset.Name = product.Name;
             asset.RecordTypeId = ASSET_RECORDTYPE;
+            asset.ExternalId__c = product.Id + account.Username__c;
 
             insert asset;
 
             PostResponse response = new PostResponse(asset.Id);
-            return JSON.serialize(response);
+
+            return response;
         } catch (Exception e) {
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            PostResponse res = new PostResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -121,32 +121,22 @@ global with sharing class QuestIntegration {
             this.success = true;
             this.id = id;
         }
+
+        global PostResponse(String errorMessage) {
+            this.success = false;
+            this.message = errorMessage;
+        }
     }
 
     @HttpPatch
-    global static String updateQuest(PatchRequest request) {
+    global static PatchResponse updateQuest(PatchRequest request) {
         try {
             String username = request.username;
-            if(String.isEmpty(username)) {
-                throw new QuestException('username parameter not found.');
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new QuestException('user not found.');
-            }
-
+            
             Id questId = Id.valueOf(request.id);
 
             if([SELECT Id FROM Asset WHERE Id =: questId].size() < 1) {
-                throw new QuestException('quest not available.');
-            }
-
-            if((request.currentChapter == null || request.currentChapter <= 0) && (request.currentPage == null || request.currentPage <= 0)) {
-                throw new QuestException('current progress not informed.');
-            }
-
-            if(request.currentChapter != null && request.currentPage != null) {
-                throw new QuestException('invalid progress informed.');
+                throw new CalloutException('quest not available.');
             }
 
             Integer currentChapter = request.currentChapter;
@@ -175,9 +165,10 @@ global with sharing class QuestIntegration {
             response.currentChapter = currentChapter;
             response.currentPage = currentPage;
 
-            return JSON.serialize(response);
+            return response;
         } catch (Exception e) {
-            return JSON.serialize(new ErrorResponse(e.getMessage()));
+            PatchResponse res = new PatchResponse(e.getMessage());
+            return res;
         }
     }
 
@@ -248,19 +239,10 @@ global with sharing class QuestIntegration {
             this.hasCheckpoint = false;
             this.capped = false;            
         }
-    }
 
-    global class ErrorResponse {
-        global Boolean success;
-        global String message;
-
-        global ErrorResponse(String message) {
+        global PatchResponse(String errorMessage) {
             this.success = false;
-            this.message = message;
+            this.message = errorMessage;
         }
-    } 
-
-    private class QuestException extends Exception {
-    }
-    
+    }    
 }
