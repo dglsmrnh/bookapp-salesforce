@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-24-2024
+ * @last modified on  : 02-25-2024
  * @last modified by  : dglsmrnh
 **/
 public without sharing class AccountHelper {
@@ -36,6 +36,7 @@ public without sharing class AccountHelper {
                     asset.RecordTypeId = ASSET_CLASS_RECORDTYPE;
                     asset.Product2Id = productMap.get(className);
                     asset.Name = className;
+                    asset.ExternalId__c = productMap.get(className) + account.Username__c;
 
                     assetList.add(asset);
                 }

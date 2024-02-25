@@ -29,7 +29,7 @@ private class ClassIntegrationTest {
         // Call the REST endpoint
         RestRequest request = new RestRequest();
         request.requestURI = '/services/apexrest/class';
-        request.addParameter('username', 'testUsername');
+        request.addParameter('username', 'testuser');
         RestContext.request = request;
 
         ClassIntegration.GetResponse response = ClassIntegration.getAvailableClasses();
@@ -60,7 +60,7 @@ private class ClassIntegrationTest {
 
         // Construct the PostRequest object
         ClassIntegration.PostRequest postRequest = new ClassIntegration.PostRequest();
-        postRequest.username = 'testUsername';
+        postRequest.username = 'testuser';
         postRequest.classId = String.valueOf(testProduct.Id);
 
         // Call the REST endpoint
