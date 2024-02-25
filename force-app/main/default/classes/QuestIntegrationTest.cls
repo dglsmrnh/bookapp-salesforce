@@ -119,7 +119,8 @@ private class QuestIntegrationTest {
             CurrentChapter__c = 1,
             CurrentPage__c = 5,
             Name = 'Test Product',
-            RecordTypeId = QuestIntegration.ASSET_RECORDTYPE
+            RecordTypeId = QuestIntegration.ASSET_RECORDTYPE,
+            ExternalId__c = testProduct.Id + testAccount.Username__c
             // Add other required fields
         );
         insert testAsset;

@@ -180,6 +180,7 @@ global with sharing class AccountIntegration {
             if(String.isNotBlank(this.classId)) {
                 Asset classAsset = new Asset();
                 classAsset.Account = newAccount;
+                classAsset.Name = this.classId + username;
                 classAsset.Product2Id = Id.valueOf(this.classId);
                 classAsset.ExternalId__c = this.classId + username;
                 classAsset.RecordTypeId = ASSET_CLASS_RECORDTYPE;
@@ -189,6 +190,7 @@ global with sharing class AccountIntegration {
             if(String.isNotBlank(this.raceId)) {
                 Asset raceAsset = new Asset();
                 raceAsset.Account = newAccount;
+                raceAsset.Name = this.classId + username;
                 raceAsset.Product2Id = Id.valueOf(this.raceId);
                 raceAsset.ExternalId__c = this.raceId + username;
                 raceAsset.RecordTypeId = ASSET_RACE_RECORDTYPE;
@@ -198,6 +200,7 @@ global with sharing class AccountIntegration {
             if(String.isNotBlank(this.colorId)) {
                 Asset colorAsset = new Asset();
                 colorAsset.Account = newAccount;
+                colorAsset.Name = this.classId + username;
                 colorAsset.Product2Id = Id.valueOf(this.colorId);
                 colorAsset.ExternalId__c = this.colorId + username;
                 colorAsset.RecordTypeId = ASSET_COLOR_RECORDTYPE;

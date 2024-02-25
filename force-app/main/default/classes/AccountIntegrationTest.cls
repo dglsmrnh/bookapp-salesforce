@@ -96,18 +96,24 @@ private class AccountIntegrationTest {
         List<Asset> assetList = new List<Asset>{
             new Asset(
                 AccountId = testAccount.Id,
+                Name = 'Class Product',
                 Product2Id = productList[0].Id, // Associate with Class Product
-                RecordTypeId = AccountIntegration.ASSET_CLASS_RECORDTYPE
+                RecordTypeId = AccountIntegration.ASSET_CLASS_RECORDTYPE,
+                ExternalId__c = productList[0].Id + testAccount.Username__c
             ),
             new Asset(
                 AccountId = testAccount.Id,
+                Name = 'Race Product',
                 Product2Id = productList[1].Id, // Associate with Race Product
-                RecordTypeId = AccountIntegration.ASSET_RACE_RECORDTYPE
+                RecordTypeId = AccountIntegration.ASSET_RACE_RECORDTYPE,
+                ExternalId__c = productList[1].Id + testAccount.Username__c
             ),
             new Asset(
                 AccountId = testAccount.Id,
+                Name = 'Color Product',
                 Product2Id = productList[2].Id, // Associate with Color Product
-                RecordTypeId = AccountIntegration.ASSET_COLOR_RECORDTYPE
+                RecordTypeId = AccountIntegration.ASSET_COLOR_RECORDTYPE,
+                ExternalId__c = productList[2].Id + testAccount.Username__c
             )
         };
         insert assetList;
