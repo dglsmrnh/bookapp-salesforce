@@ -16,19 +16,11 @@ global with sharing class QuestIntegration {
         try {
             RestRequest req = RestContext.request;
 
-            if(!req.params.containsKey('username')) {
-                throw new CalloutException('username parameter not found.');
-            }
-
             String username = req.params.get('username');
             Boolean recommendation = false;
 
             if(req.params.containsKey('recommendation')) {
                 recommendation = Boolean.valueOf(req.params.get('recommendation'));
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new CalloutException('username\'s account not found.');
             }
 
             String fields = String.join(IntegrationUtils.getFields('Product2'), ', ');
@@ -88,14 +80,6 @@ global with sharing class QuestIntegration {
     global static PostResponse createQuest(PostRequest request) {
         try {
             String username = request.username;
-            if(String.isEmpty(username)) {
-                throw new CalloutException('username parameter not found.');
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new CalloutException('user not found.');
-            }
-
             Id questId = Id.valueOf(request.id);
 
             if([SELECT Id FROM Product2 WHERE Id =: questId AND IsActive = true].size() < 1) {
@@ -148,26 +132,11 @@ global with sharing class QuestIntegration {
     global static PatchResponse updateQuest(PatchRequest request) {
         try {
             String username = request.username;
-            if(String.isEmpty(username)) {
-                throw new CalloutException('username parameter not found.');
-            }
-
-            if([SELECT Id FROM Account WHERE Username__c =: username].size() < 1) {
-                throw new CalloutException('user not found.');
-            }
-
+            
             Id questId = Id.valueOf(request.id);
 
             if([SELECT Id FROM Asset WHERE Id =: questId].size() < 1) {
                 throw new CalloutException('quest not available.');
-            }
-
-            if((request.currentChapter == null || request.currentChapter <= 0) && (request.currentPage == null || request.currentPage <= 0)) {
-                throw new CalloutException('current progress not informed.');
-            }
-
-            if(request.currentChapter != null && request.currentPage != null) {
-                throw new CalloutException('invalid progress informed.');
             }
 
             Integer currentChapter = request.currentChapter;
