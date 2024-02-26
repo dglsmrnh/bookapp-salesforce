@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @RestResource(urlMapping='/class')
 global with sharing class ClassIntegration {
     
@@ -72,7 +79,7 @@ global with sharing class ClassIntegration {
                 throw new ClassException('class not available.');
             }
 
-            Account account = [SELECT Id, DefaultClass__c FROM Account WHERE Username__c =: username];
+            Account account = [SELECT Id, DefaultClass__c, Username__c FROM Account WHERE Username__c =: username];
             Product2 product = [SELECT Id, Name FROM Product2 WHERE Id =: classId AND IsActive = true];
 
             Asset asset = new Asset();
@@ -80,6 +87,7 @@ global with sharing class ClassIntegration {
             asset.Product2Id = classId;
             asset.Name = product.Name;
             asset.RecordTypeId = ASSET_RECORDTYPE;
+            asset.ExternalId__c = product.Id + account.Username__c;
 
             insert asset;
 

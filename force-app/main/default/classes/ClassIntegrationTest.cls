@@ -1,6 +1,13 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 02-25-2024
+ * @last modified by  : dglsmrnh
+**/
 @isTest
 private class ClassIntegrationTest {
-
+    
     @isTest
     static void testGetAvailableClasses() {
         Test.startTest();
@@ -8,8 +15,11 @@ private class ClassIntegrationTest {
         // Create test data (replace with your actual test data creation logic)
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -19,7 +29,7 @@ private class ClassIntegrationTest {
         // Call the REST endpoint
         RestRequest request = new RestRequest();
         request.requestURI = '/services/apexrest/class';
-        request.addParameter('username', 'testUsername');
+        request.addParameter('username', 'testuser');
         RestContext.request = request;
 
         ClassIntegration.GetResponse response = ClassIntegration.getAvailableClasses();
@@ -37,8 +47,11 @@ private class ClassIntegrationTest {
         // Create test data (replace with your actual test data creation logic)
         Account testAccount = new Account(
             Name = 'Test Account',
-            Username__c = 'testUsername',
-            Password__c = 'Password@123'
+            Email__c = 'test@example.com',
+            Username__c = 'testuser',
+            Password__c = 'Password@123',
+            Gender__c = 'Male',
+            Birthday__c = Date.newInstance(2000, 1, 1)
         );
         insert testAccount;
 
@@ -47,7 +60,7 @@ private class ClassIntegrationTest {
 
         // Construct the PostRequest object
         ClassIntegration.PostRequest postRequest = new ClassIntegration.PostRequest();
-        postRequest.username = 'testUsername';
+        postRequest.username = 'testuser';
         postRequest.classId = String.valueOf(testProduct.Id);
 
         // Call the REST endpoint
