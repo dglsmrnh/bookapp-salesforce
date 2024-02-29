@@ -1,0 +1,35 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div>
+		<label class="slds-form-element__label" for="input__quantity">
+			{quantityLabel} <span if:true={isEnabledMaxQuantity}>(Max: {maxQuantity})</span>
+		</label>
+
+		<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right">
+			<button
+				class="slds-button slds-button_icon slds-input__icon slds-input__icon_left"
+				onclick={onClickSubtractQuantity}
+				disabled={isDisabledEditQuantity}
+			>
+				<lightning-icon icon-name="utility:ban" size="x-small"></lightning-icon>
+			</button>
+
+			<input
+				id="input__quantity"
+				class="slds-input text__align-center"
+				value={quantity}
+				type="number"
+				onchange={onChangeQuantity}
+				disabled={isDisabledEditQuantity}
+			/>
+
+			<button
+				class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+				onclick={onClickAddQuantity}
+				disabled={isDisabledEditQuantity}
+			>
+				<lightning-icon icon-name="utility:new" size="x-small"></lightning-icon>
+			</button>
+		</div>
+	</div>
+</template>

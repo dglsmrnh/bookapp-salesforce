@@ -1,0 +1,22 @@
+
+.main {
+	position: relative;
+}
+
+.container__button-float {
+	position: sticky;
+	bottom: 50px;
+}
+
+.container__product {
+	width: 100%;
+}
+
+.button__float-right {
+	height: 50px;
+	width: 50px;
+
+	background-color: #e5e5e5;
+
+	border-radius: 50%;
+}

@@ -1,0 +1,48 @@
+
+.container__pagination {
+	display: flex;
+	align-items: center;
+}
+
+.button__arrow {
+	background: transparent;
+
+	font-size: 1rem;
+	font-weight: 900;
+	color: #c9c9c9;
+	line-height: 1.75rem;
+}
+
+.button__break {
+	margin: 0 0.5rem;
+}
+
+.button__page {
+	margin: 0px 0.5rem;
+
+	font-size: 1rem;
+	font-weight: 900;
+	color: #c9c9c9;
+	line-height: 1.75rem;
+}
+
+.current__page {
+	color: #ea001e;
+}
+
+.text__pagination {
+	margin: 0px 0.5rem;
+	padding: 0px;
+
+	font-size: 16px;
+	font-family: Poppins, sans-serif !important;
+
+	border: none;
+
+	list-style: none;
+	box-sizing: border-box;
+}
+
+.text__number {
+	display: flex;
+}

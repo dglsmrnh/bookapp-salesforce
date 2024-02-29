@@ -1,0 +1,15 @@
+
+.section__popup {
+	animation: open-popup 1s;
+}
+
+@keyframes open-popup {
+	from {
+		transform: scale(0.5);
+		opacity: 0.2;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

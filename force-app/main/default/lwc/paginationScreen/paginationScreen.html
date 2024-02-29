@@ -1,0 +1,50 @@
+<!--
+  @description       : 
+  @author            : douglas.marinho@globant.com
+  @group             : 
+  @last modified on  : 02-29-2024
+  @last modified by  : douglas.marinho@globant.com
+-->
+<template>
+	<div class="slds-tabs_default main">
+		<lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
+
+		<ul class="slds-tabs_default__nav" role="tablist">
+			<template for:each={tabList} for:item="tab">
+
+				<li
+					key={tab.id}
+					data-id={tab.id}
+					class={tab.class}
+					title={tab.label}
+					role="presentation"
+					onclick={onClickSelectTab}
+				>
+					<a
+						class="slds-tabs_default__link"
+						href="#"
+						role="tab"
+						tabindex="0"
+						aria-selected={tab.isSelected}
+						aria-controls={tab.ariaControlId}
+						id={tab.tabId}
+					>
+						{tab.label}
+					</a>
+				</li>
+
+			</template>
+		</ul>
+
+		<div
+			if:true={tabBodyMap.tabSeeMore}
+			id="tab-default-1"
+			class="slds-tabs_default__content slds-show"
+			role="tabpanel"
+			aria-labelledby="tab-default-1__item"
+		>
+			<c-pagination-see-more>
+			</c-pagination-see-more>
+		</div>
+	</div>
+</template>

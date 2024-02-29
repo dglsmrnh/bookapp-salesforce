@@ -1,0 +1,32 @@
+
+.section__popup {
+	animation: open-popup 1s;
+}
+
+.container__step {
+	padding: 10px 0px;
+
+	border-bottom: 1px solid #d0d0d0;
+}
+.container__step:last-child {
+	padding: 10px 0px;
+
+	border-bottom: none;
+}
+
+.title-step {
+	font-size: 14px;
+	font-weight: bold;
+	color: #0176d3;
+}
+
+@keyframes open-popup {
+	from {
+		transform: scale(0.5);
+		opacity: 0.2;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

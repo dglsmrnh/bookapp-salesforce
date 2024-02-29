@@ -1,0 +1,97 @@
+.main__record-component {
+	width: 100%;
+
+	border-color: #e5e5e5;
+	border-radius: 5px;
+}
+
+.container__card {
+	border-color: #c9c9c9;
+}
+.container__card-selected {
+	border-color: #45c65a;
+}
+
+.container__header-checkbox {
+	height: 100%;
+	width: 30px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	background-color: #fff;
+
+	border: 1px solid #c9c9c9;
+	border-radius: 5px;
+
+	cursor: pointer;
+}
+
+.container__header-record {
+	margin-bottom: 0px !important;
+	padding-bottom: 12px;
+
+	background-color: #f3f3f3;
+
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+.container__header-record-selected {
+	margin-bottom: 0px !important;
+	padding-bottom: 11px;
+
+	background-color: #f3f3f3;
+
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom: 1px solid #45c65a;
+}
+
+.container__body-record {
+	margin-top: 0px !important;
+	padding: 0px 5px !important;
+}
+
+.container__comment {
+	height: 50px;
+
+	overflow-y: auto;
+}
+
+.title {
+	font-size: 18px;
+	font-weight: bold;
+
+	cursor: pointer;
+}
+
+.text__bold {
+	font-weight: bold;
+}
+
+.icon-svg {
+	height: 30px;
+	width: 30px;
+
+	stroke: #000;
+	stroke-width: 1px;
+
+	cursor: pointer;
+}
+.icon-svg:hover {
+	height: 30px;
+	width: 30px;
+
+	fill: #0176d3;
+
+	stroke: #000;
+	stroke-width: 1px;
+
+	cursor: pointer;
+}
+
+.icon-svg-checbox {
+	height: 20px;
+	width: 20px;
+}

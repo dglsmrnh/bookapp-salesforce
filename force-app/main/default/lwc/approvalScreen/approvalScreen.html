@@ -1,0 +1,280 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="main">
+		<lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
+
+		<lightning-layout class={headerClass} multiple-rows horizontal-align="spread">
+			<lightning-button-group>
+				<lightning-button if:true={isMobile} label={labels.refreshLabel} variant="brand-outline" onclick={onClickRefreshData}>
+				</lightning-button>
+
+				<lightning-button label={labels.clearLabel} variant="brand" onclick={onClickClearAll} disabled={isDisabledHeaderButton}>
+				</lightning-button>
+
+				<lightning-button label={labels.rejectLabel} variant="destructive" onclick={onClickRejectAll} disabled={isDisabledHeaderButton}>
+				</lightning-button>
+
+				<lightning-button label={labels.approveLabel} variant="success" onclick={onClickApproveAll} disabled={isDisabledHeaderButton}>
+				</lightning-button>
+
+				<div if:false={isMobile} id="menu__dropdown" class={menuDropdownClass}>
+					<button
+						class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_last"
+						aria-haspopup="true"
+						aria-expanded="true"
+						title={labels.moreOptionsLabel}
+						onclick={onClickMenuDropdownHandler}
+					>
+						<svg class="slds-button__icon" aria-hidden="true">
+							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+						</svg>
+						<span class="slds-assistive-text">{labels.moreOptionsLabel}</span>
+					</button>
+
+					<div class="slds-dropdown slds-dropdown_right">
+						<ul class="slds-dropdown__list" role="menu">
+							<li class="slds-dropdown__item" role="presentation" onclick={onClickRefreshData}>
+								<a href="#" role="menuitem" tabindex="0">
+									<span class="slds-truncate" title={labels.refreshDataLabel}>
+										{labels.refreshDataLabel}
+									</span>
+								</a>
+							</li>
+
+							<li
+								if:false={isShowDatatable}
+								data-name="table"
+								class="slds-dropdown__item"
+								role="presentation"
+								onclick={onClickChangeDisplayRecord}
+							>
+								<a data-name="table" href="#" role="menuitem" tabindex="-1">
+									<span data-name="table" class="slds-truncate" title={labels.showInTableLabel}>
+										{labels.showInTableLabel}
+									</span>
+								</a>
+							</li>
+
+							<li
+								if:true={isShowDatatable}
+								data-name="card"
+								class="slds-dropdown__item"
+								role="presentation"
+								onclick={onClickChangeDisplayRecord}
+							>
+								<a data-name="card" href="#" role="menuitem" tabindex="-1">
+									<span data-name="card" class="slds-truncate" title={labels.showInCardLabel}>
+										{labels.showInCardLabel}
+									</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</lightning-button-group>
+
+			<div if:false={isMobile} class="container__title">
+				<lightning-icon icon-name="standard:approval" size="medium"></lightning-icon>
+				<label class="slds-var-p-left_xx-small slds-truncate title">{labels.approvalScreenLabel}</label>
+			</div>
+		</lightning-layout>
+
+		<lightning-layout multiple-rows>
+			<lightning-layout-item
+				class="slds-var-m-vertical_medium slds-var-p-horizontal_small container__filter"
+				size="12" medium-device-size="3" large-device-size="2"
+			>
+				<lightning-layout class="slds-var-p-vertical_x-small content__filter" multiple-rows>
+					<!-- <lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<c-multi-picklist
+							if:true={isShowMultiPicklists}
+							name="objectSelectedList"
+							label={labels.objectNameLabel}
+							option-list={objectOptionList}
+							selected-value-list={filterData.objectSelectedList}
+							onselectoption={handleSelectOptionList}
+							multi-select
+						>
+						</c-multi-picklist>
+					</lightning-layout-item> -->
+
+					<lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<c-multi-picklist
+							if:true={isShowMultiPicklists}
+							name="statusSelectedList"
+							label={labels.statusLabel}
+							option-list={statusOptionList}
+							selected-value-list={filterData.statusSelectedList}
+							onselectoption={handleSelectOptionList}
+							multi-select
+						>
+						</c-multi-picklist>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<c-multi-picklist
+							if:true={isShowMultiPicklists}
+							name="processSelectedList"
+							label={labels.approvalProcessNameLabel}
+							option-list={processOptionList}
+							selected-values={filterData.processSelectedList}
+							onselectoption={handleSelectOptionList}
+							multi-select
+						>
+						</c-multi-picklist>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<lightning-combobox
+							name="sortedBySelectedList"
+							label={labels.sortedByNameLabel}
+							value={sortedBy}
+							placeholder={labels.sortedByNameLabel}
+							options={sortedBySelectedOptions}
+							onchange={handlerSortedByChange} >
+						</lightning-combobox>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<lightning-combobox
+							name="sortedDirectionSelectedList"
+							label={labels.sortedDirectionNameLabel}
+							value={sortedDirection}
+							placeholder={labels.sortedDirectionNameLabel}
+							options={sortedDirectionSelectedOptions}
+							onchange={handlerSortedDirectionChange} >
+						</lightning-combobox>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-top_xx-small slds-var-p-horizontal_small"
+						size="6" medium-device-size="12" large-device-size="12"
+					>
+						<lightning-input
+							name="submitterName"
+							label={labels.submitterNameLabel}
+							placeholder={labels.submitterNamePlaceholder}
+							value={filterData.submitterName}
+							onchange={onChangeFilterData}
+						>
+						</lightning-input>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_small"
+						size="12"
+					>
+						<button class="slds-button slds-button_neutral button-clear-filter" onclick={onClickClearFilters}>
+							{labels.clearLabel}
+						</button>
+					</lightning-layout-item>
+				</lightning-layout>
+			</lightning-layout-item>
+
+			<lightning-layout-item size="12" medium-device-size="9" large-device-size="10">
+				<lightning-layout if:false={isShowDatatable} class="container__records" multiple-rows>
+
+					<template for:each={approvalRecords} for:item="record">
+						<lightning-layout-item
+							key={record.id}
+							class="slds-var-m-vertical_medium slds-var-p-horizontal_medium"
+							size="12" medium-device-size="6" large-device-size="4"
+						>
+
+							<c-approval-record-component
+								record={record}
+								onchangedata={handleApprovalRecordData}
+								oncheckhistory={handleCheckHistory}
+								oncheckdetail={handleOpenDetail}
+								onselect={handleSelectRecord}
+								onreject={handleRejectRecord}
+								onapprove={handleApproveRecord}
+							>
+							</c-approval-record-component>
+
+						</lightning-layout-item>
+					</template>
+
+				</lightning-layout>
+
+				<lightning-layout if:true={isShowDatatable} class="container__records" multiple-rows>
+
+					<lightning-datatable
+						key-field="id"
+						class="slds-var-m-vertical_medium slds-var-p-horizontal_medium datatable"
+						show-row-number-column
+						suppress-bottom-bar
+						data={approvalRecords}
+						selected-rows={selectedRecordIdList}
+						columns={tableColumns}
+						onrowselection={onClickRowDatatableHandler}
+						onrowaction={onClickRowActionHandler}
+						oncellchange={onChangeRowData}>
+					</lightning-datatable>
+
+					<!-- sorted-by={sortedBy}
+						sorted-direction={sortedDirection}
+						onsort={onClickSortHandler} -->
+
+				</lightning-layout>
+
+				<lightning-layout if:true={isApprovalRecordsEmpty} class="container__record-empty" multiple-rows>
+
+					<lightning-icon icon-name="utility:warning" size="large"></lightning-icon>
+
+					<p class="text__empty">{labels.emptyApprovalRecordLabel}</p>
+
+				</lightning-layout>
+
+				<lightning-layout
+					if:false={isApprovalRecordsEmpty}
+					class="container__button-seeMore"
+					horizontal-align="center"
+				>
+					<button class="slds-button slds-button_icon slds-button_icon-neutral button-seeMore" onclick={onClickSearchMore}>
+						{labels.showMoreLabel}
+						<svg class="slds-var-m-left_xx-small slds-button__icon icon-seeMore" aria-hidden="true">
+							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+						</svg>
+						<span class="slds-assistive-text">{labels.showMoreLabel}</span>
+					</button>
+				</lightning-layout>
+			</lightning-layout-item>
+		</lightning-layout>
+	</div>
+
+	<template if:true={isOpenCheckHistory}>
+		<c-approval-history-component
+			process-history-list={processHistoryList}
+			onclose={closeHistoryPopup}
+		>
+		</c-approval-history-component>
+	</template>
+
+	<template if:true={isOpenModalConfirm}>
+		<c-approval-modal-component
+			title="Confirme a ação"
+			message={modalConfirmMessage}
+			is-approve={isApproveModal}
+			oncancel={handleCancelApprovalAction}
+			onaction={handleApprovalAction}
+			onrowaction={handleApprovalAction}
+		>
+		</c-approval-modal-component>
+	</template>
+</template>

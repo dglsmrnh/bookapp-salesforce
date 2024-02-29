@@ -1,0 +1,43 @@
+
+.main {
+	position: relative;
+}
+
+.container__product {
+	width: 100%;
+}
+
+.container__button-float {
+	position: sticky;
+	bottom: 50px;
+}
+
+.container__button-see-more {
+	width: 100%;
+
+	padding-top: 10px;
+}
+
+.content__button-see-more {
+	width: 100%;
+
+	padding: 10px;
+
+	background-color: transparent;
+	color: #444444;
+
+	border-color: #d0d0d0;
+}
+
+.button__float-right {
+	height: 50px;
+	width: 50px;
+
+	background-color: #e5e5e5;
+
+	border-radius: 50%;
+}
+
+.svg__down {
+	margin-top: 1px;
+}
