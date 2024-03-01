@@ -3,45 +3,23 @@
   @author            : douglas.marinho@globant.com
   @group             : 
   @last modified on  : 02-29-2024
-  @last modified by  : douglas.marinho@globant.com
+  @last modified by  : dglsmrnh
 -->
 <template>
 	<div class="slds-tabs_default main">
 		<lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
-
-		<ul class="slds-tabs_default__nav" role="tablist">
-			<template for:each={tabList} for:item="tab">
-
-				<li
-					key={tab.id}
-					data-id={tab.id}
-					class={tab.class}
-					title={tab.label}
-					role="presentation"
-					onclick={onClickSelectTab}
-				>
-					<a
-						class="slds-tabs_default__link"
-						href="#"
-						role="tab"
-						tabindex="0"
-						aria-selected={tab.isSelected}
-						aria-controls={tab.ariaControlId}
-						id={tab.tabId}
-					>
-						{tab.label}
-					</a>
-				</li>
-
-			</template>
-		</ul>
+		
+		<lightning-input label="Search" value={searchTerm} onchange={handleChange} onkeydown={handleKeyDown}></lightning-input>
+    <lightning-button label="Search" onclick={searchBooks}></lightning-button>
 
 		<div
-			if:true={tabBodyMap.tabSeeMore}
 			id="tab-default-1"
 			class="slds-tabs_default__content slds-show"
 			role="tabpanel"
 			aria-labelledby="tab-default-1__item"
+			book-list={bookList}
+			onsearchmore={handleSearchMore}
+			is-show-see-more-button={isShowSeeMoreButton}
 		>
 			<c-pagination-see-more>
 			</c-pagination-see-more>

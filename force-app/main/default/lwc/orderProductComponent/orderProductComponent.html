@@ -4,27 +4,21 @@
 		<div class="slds-grid">
 			<header class="slds-media slds-media_center slds-var-p-horizontal_xx-small slds-has-flexi-truncate">
 				<div class="slds-media__figure">
-					<lightning-icon icon-name="standard:product" size="medium"></lightning-icon>
+					<lightning-icon icon-name="custom:custom55" size="medium"></lightning-icon>
 				</div>
 
-				<div class="slds-media__body slds-truncate container__product-name" title={product.productName}>
-					{product.productName}
+				<div class="slds-media__body slds-truncate container__product-name" title={book.volumeInfo.title}>
+					{book.volumeInfo.title}
 				</div>
 
-				<div if:false={disabled} class="slds-no-flex">
+				<div class="slds-no-flex">
 					<button
-						if:false={product.isSelected}
 						class="slds-button button-add"
-						onclick={onClickAddProduct}
+						onclick={onClickAddBook}
 					>
 						<svg class="slds-icon slds-icon-text-default slds-icon_x-small icon-add" aria-hidden="true">
 							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#add"></use>
 						</svg>
-					</button>
-
-					<button if:true={product.isSelected} class="slds-button button-remove" onclick={onClickRemoveProduct}>
-						<lightning-icon icon-name="utility:delete" variant="error" size="x-small">
-						</lightning-icon>
 					</button>
 				</div>
 			</header>
@@ -33,86 +27,73 @@
 		<div>
 			<lightning-layout multiple-rows>
 				<lightning-layout-item class="content__field" size="6">
-					<lightning-input
-						name="unitPrice"
-						label={labels.unitPriceLabel}
-						value={product.unitPrice}
-						type="number"
-						formatter="currency"
-						step="0.01"
-						max-length="16"
-						min="0"
-						max={product.listPrice}
-						field-level-help="Must be less than or equal to list price"
-						onchange={onChangeProductData}
-						disabled={disabled}>
-					</lightning-input>
+					<template if:true={hasThumbnail}>
+						<lightning-avatar size="large" src={book.volumeInfo.imageLinks.thumbnail} fallback-icon-name="custom:custom55"></lightning-avatar>
+					</template>
 				</lightning-layout-item>
-
-				<lightning-layout-item class="content__field" size="6">
-					<lightning-input
-						name="discount"
-						label={labels.discountLabel}
-						value={product.discount}
-						type="number"
-						formatter="percent-fixed"
-						step="0.01"
-						max-length="3"
-						min="0"
-						max="100"
-						onchange={onChangeProductData}
-						disabled={disabled}>
-					</lightning-input>
-				</lightning-layout-item>
-
-				<lightning-layout-item class="content__field" size="6">
-					<c-quantity-component
-						quantity-label={labels.quantityLabel}
-						quantity={product.quantity}
-						is-disabled-quantity={disabled}
-						onchangequantity={onChangeQuantity}
-					>
-					</c-quantity-component>
-				</lightning-layout-item>
-
+				
 				<lightning-layout-item class="content__field" size="6">
 					<div class="container__field-readOnly">
-						{labels.totalPriceLabel}
+						Autor
 						<p class="text__totalPrice">
-							<lightning-formatted-number
-								value={product.totalPrice}
-								format-style="currency"
-								maximum-fraction-digits="2">
-							</lightning-formatted-number>
+							<template for:each={book.volumeInfo.authors} for:item="author">
+								<p key={author}>{author}</p>
+							</template>
 						</p>
 					</div>
 				</lightning-layout-item>
-
+				<lightning-layout-item class="content__field" size="12">
+					<div class="container__field-readOnly">
+						Descrição
+						<lightning-textarea value={book.volumeInfo.description} disabled></lightning-textarea>
+					</div>
+				</lightning-layout-item>
+			</lightning-layout>
+			<lightning-layout multiple-rows>
 				<lightning-layout-item class="content__field" size="6">
 					<div class="container__field-readOnly">
-						{labels.listPriceLabel}
-						<p>
-							<lightning-formatted-number
-								value={product.listPrice}
-								format-style="currency"
-								maximum-fraction-digits="2">
-							</lightning-formatted-number>
+						Editora
+						<p class="text__totalPrice">
+							{book.volumeInfo.publisher}
 						</p>
 					</div>
 				</lightning-layout-item>
-
 				<lightning-layout-item class="content__field" size="6">
 					<div class="container__field-readOnly">
-						{labels.totalListPriceLabel}
-						<p>
-							<lightning-formatted-number
-								value={product.totalListPrice}
-								format-style="currency"
-								maximum-fraction-digits="2">
-							</lightning-formatted-number>
+						Publicação
+						<p class="text__totalPrice">
+							{book.volumeInfo.publisherDate}
 						</p>
 					</div>
 				</lightning-layout-item>
+				<lightning-layout-item class="content__field" size="12">
+					<div class="container__field-readOnly">
+						Categoria
+						<p class="text__totalPrice">
+							<template for:each={book.volumeInfo.categories} for:item="category">
+								<p key={category}>{category}</p>
+							</template>
+						</p>
+					</div>
+				</lightning-layout-item>
+				<lightning-layout-item class="content__field" size="4">
+					<div class="container__field-readOnly">
+						Páginas
+						<p class="text__totalPrice">
+							<lightning-formatted-number value={book.volumeInfo.pageCount} maximum-fraction-digits="0"></lightning-formatted-number>
+						</p>
+					</div>
+				</lightning-layout-item>
+				<template for:each={book.volumeInfo.industryIdentifiers} for:item="isbn">
+					<lightning-layout-item class="content__field" size="4" key={isbn.identifier}>
+						<div class="container__field-readOnly">
+							{isbn.type}
+							<p class="text__totalPrice">							
+								{isbn.identifier}
+							</p>
+						</div>
+					</lightning-layout-item>
+				</template>
 			</lightning-layout>
 		</div>
 	</div>
