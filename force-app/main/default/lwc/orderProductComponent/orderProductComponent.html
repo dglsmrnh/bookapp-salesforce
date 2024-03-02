@@ -1,6 +1,6 @@
 <!-- sldsValidatorIgnore -->
 <template>
-	<div class={product.productClass}>
+	<div class="slds-card container__product">
 		<div class="slds-grid">
 			<header class="slds-media slds-media_center slds-var-p-horizontal_xx-small slds-has-flexi-truncate">
 				<div class="slds-media__figure">
@@ -26,18 +26,25 @@
 
 		<div>
 			<lightning-layout multiple-rows>
-				<lightning-layout-item class="content__field" size="6">
+				<lightning-layout-item class="content__field" size="4">
 					<template if:true={hasThumbnail}>
 						<lightning-avatar size="large" src={book.volumeInfo.imageLinks.thumbnail} fallback-icon-name="custom:custom55"></lightning-avatar>
 					</template>
+				</lightning-layout-item>				
+				<lightning-layout-item class="content__field" size="8">
+					<div class="container__field-readOnly">
+						Título
+						<p class="text__titleBold">
+							{book.volumeInfo.title}
+						</p>
+					</div>
 				</lightning-layout-item>
-				
-				<lightning-layout-item class="content__field" size="6">
+				<lightning-layout-item class="content__field" size="12">
 					<div class="container__field-readOnly">
 						Autor
-						<p class="text__totalPrice">
+						<p class="text__infoText slds-grid slds-gutters">
 							<template for:each={book.volumeInfo.authors} for:item="author">
-								<p key={author}>{author}</p>
+								<p class="slds-col slds-size_3-of-12" key={author}>{author}</p>
 							</template>
 						</p>
 					</div>
@@ -45,7 +52,10 @@
 				<lightning-layout-item class="content__field" size="12">
 					<div class="container__field-readOnly">
 						Descrição
-						<lightning-textarea value={book.volumeInfo.description} disabled></lightning-textarea>
+						<p class="text__infoText">
+							{book.volumeInfo.description}
+						</p>
+						<!-- <lightning-textarea value={book.volumeInfo.description} read-only></lightning-textarea> -->
 					</div>
 				</lightning-layout-item>
 			</lightning-layout>
@@ -53,7 +63,7 @@
 				<lightning-layout-item class="content__field" size="6">
 					<div class="container__field-readOnly">
 						Editora
-						<p class="text__totalPrice">
+						<p class="text__infoText">
 							{book.volumeInfo.publisher}
 						</p>
 					</div>
@@ -61,15 +71,15 @@
 				<lightning-layout-item class="content__field" size="6">
 					<div class="container__field-readOnly">
 						Publicação
-						<p class="text__totalPrice">
-							{book.volumeInfo.publisherDate}
+						<p class="text__infoText">
+							{book.volumeInfo.publishedDate}
 						</p>
 					</div>
 				</lightning-layout-item>
 				<lightning-layout-item class="content__field" size="12">
 					<div class="container__field-readOnly">
 						Categoria
-						<p class="text__totalPrice">
+						<p class="text__infoText">
 							<template for:each={book.volumeInfo.categories} for:item="category">
 								<p key={category}>{category}</p>
 							</template>
@@ -79,7 +89,7 @@
 				<lightning-layout-item class="content__field" size="4">
 					<div class="container__field-readOnly">
 						Páginas
-						<p class="text__totalPrice">
+						<p class="text__infoText">
 							<lightning-formatted-number value={book.volumeInfo.pageCount} maximum-fraction-digits="0"></lightning-formatted-number>
 						</p>
 					</div>
@@ -88,7 +98,7 @@
 					<lightning-layout-item class="content__field" size="4" key={isbn.identifier}>
 						<div class="container__field-readOnly">
 							{isbn.type}
-							<p class="text__totalPrice">							
+							<p class="text__infoText">							
 								{isbn.identifier}
 							</p>
 						</div>

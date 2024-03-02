@@ -49,7 +49,12 @@
 	fill: #0176D3 !important;
 }
 
-.text__totalPrice {
-	font-size: 14px;
+.text__titleBold {
+	font-size: 12px;
 	font-weight: bold;
+}
+
+.text__infoText {
+	color: #666;
+	font-size: 11px;
 }

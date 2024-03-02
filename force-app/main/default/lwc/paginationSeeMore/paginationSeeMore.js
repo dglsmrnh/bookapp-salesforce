@@ -2,11 +2,13 @@ import { LightningElement, api } from 'lwc';
 
 export default class PaginationSeeMore extends LightningElement {
 	
-	@api
-	bookList = [];
+	@api bookList = [];
 
-	@api
-	isShowSeeMoreButton = false;
+	get isEmpty() {
+		return this.bookList.length > 0 ? false : true; 
+	}
+
+	@api isShowSeeMoreButton = false;
 
 	labels = {
 		goToTopLabel: 'Voltar ao topo',
@@ -14,10 +16,8 @@ export default class PaginationSeeMore extends LightningElement {
 		errorMessage: 'Erro!'
 	};
 
-	connectedCallback() {
-	}
-
 	onClickSearchMore() {
+		console.log('search more');
 		const event = new CustomEvent('searchmore', {detail:{value:'searchmore'}})
 	}
 

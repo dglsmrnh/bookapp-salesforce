@@ -2,8 +2,7 @@ import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class OrderProductComponent extends LightningElement {
-	@api
-	book = {};
+	@api book = {};
 
 	labels = {
 		discountLabel: 'A',

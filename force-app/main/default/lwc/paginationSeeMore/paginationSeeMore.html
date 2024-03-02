@@ -1,13 +1,16 @@
 <!-- sldsValidatorIgnore -->
 <template>
 	<div class="main">
+		<template if:true={isEmpty}>
+			Nenhum livro encontrado
+		</template>
 		<lightning-layout multiple-rows>
 			<template for:each={bookList} for:item="book">
 
 				<lightning-layout-item
 					key={book.id}
 					class="slds-var-p-around_xx-small"
-					size="12" medium-device-size="3" large-device-size="2"
+					size="12" medium-device-size="6" large-device-size="4"
 				>
 					<c-order-product-component
 						class="container__product"

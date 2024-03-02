@@ -4,7 +4,6 @@ import getBooksData from '@salesforce/apex/GoogleBooksAPI.getBooksData';
 
 export default class PaginationScreen extends LightningElement {
 
-	@track 
 	searchTerm = '';
 
 	currentIndex = 0;
@@ -16,9 +15,6 @@ export default class PaginationScreen extends LightningElement {
 
 	@track
 	isShowSeeMoreButton = false;
-
-	connectedCallback() {
-	}
 
 	getParentIdRecursive(element) {
 		if (!element.dataset?.id) return this.getParentIdRecursive(element.parentElement);
@@ -35,10 +31,6 @@ export default class PaginationScreen extends LightningElement {
 		);
 	}
 
-	handleChange(event) {
-		this.searchTerm = event.target.value;
-	}
-
 	searchProducts(clear) {
 		if(clear) {
 			this.currentIndex = 0;
@@ -52,12 +44,14 @@ export default class PaginationScreen extends LightningElement {
 			this.currentIndex += bookList.length;
 		}
 
+		this.isShowLoading = true;
+
 		getBooksData({ queryString: this.searchTerm, startIndex: this.currentIndex })
 			.then(resolve => {
 				if (resolve.totalItems > 0) {
 					this.isShowSeeMoreButton = true;
 					if(clear) {
-						this.bookList = resolve.items;
+						this.bookList = [...resolve.items];
 					} 
 					else {
 						this.bookList = [...this.bookList, ...resolve.items];
@@ -71,13 +65,24 @@ export default class PaginationScreen extends LightningElement {
 				console.log('Error to see more products! =>', error);
 				this.handlerDispatchToast(this.labels.errorMessage, '', 'error');
 			})
-			.finally(() => this.isShowLoading = false);
+			.finally(() => {
+				this.isShowLoading = false
+				console.log(this.bookList);
+				console.log(this.isShowSeeMoreButton);
+			});
 	}
 
-	handleKeyDown(event) {
-		if (event.key === 'Enter') {
+	handleKeyUp(event) {
+		const isEnterKey = event.keyCode === 13;
+		console.log(event.target.value);
+		if (isEnterKey) {
+			this.searchTerm = event.target.value;
 			this.searchProducts(true);
 		}
+	}
+
+	handleSearch(event) {
+		this.searchProducts(true);
 	}
 
 	handleSearchMore(event) {
