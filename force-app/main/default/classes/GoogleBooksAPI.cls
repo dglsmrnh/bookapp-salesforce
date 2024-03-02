@@ -23,7 +23,7 @@ public with sharing class GoogleBooksAPI {
       // Construct the query parameters
       String params = '?printType=books';
       params += '&langRestrict=pt-BR';
-      params += '&maxResults=40';
+      params += '&maxResults=39';
       params += '&q=' + EncodingUtil.urlEncode(queryString.trim(), 'UTF-8');
       params += '&startIndex=' + String.valueOf(startIndex);
       System.debug(params);
