@@ -18,7 +18,9 @@ export default class PaginationSeeMore extends LightningElement {
 
 	onClickSearchMore() {
 		console.log('search more');
-		const event = new CustomEvent('searchmore', {detail:{value:'searchmore'}})
+		const event = new CustomEvent('searchmore');
+
+		this.dispatchEvent(event);
 	}
 
 	onClickGoToTop() {

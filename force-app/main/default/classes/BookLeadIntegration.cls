@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-25-2024
+ * @last modified on  : 03-05-2024
  * @last modified by  : dglsmrnh
 **/
 @RestResource(urlMapping='/recommendation')
@@ -14,18 +14,16 @@ global with sharing class BookLeadIntegration {
     global static Response BookLeadIntegration(Request request) {
         try {
             if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() <= 0) {
-            //     throw new RecommendationException('Desculpe, esse livro já foi recomendado.');
-            // }
-                Product2 prd = request.book.serializeProduct();
-                insert prd;
-
-                BookLead__c bk = request.serializeLead(prd.Id);
-                insert bk;
-
-                linkCategories(request.book.categories, prd.Id);
+                throw new CalloutException('Desculpe, esse livro já foi recomendado.');
             }
-            return new Response();
+            Product2 prd = request.book.serializeProduct();
+            Database.upsert(prd, Product2.ISBN_13__c, true);
 
+            BookLead__c bk = request.serializeLead(prd.Id);
+            insert bk;
+
+            linkCategories(request.book.categories, prd.Id);
+            return new Response();
         } catch(Exception e) {
             return new Response(e.getMessage());
         }
@@ -53,7 +51,7 @@ global with sharing class BookLeadIntegration {
             prd.IsActive = false;
             prd.Name = this.name.left(255);
             prd.ISBN_10__c = this.isbn10;
-            prd.ISBN_13__c = this.isbn13;
+            prd.ISBN_13__c = this.isbn13 == null ? this.isbn10 : this.isbn13;
             prd.MaturityRating__c = this.maturityRating;
             prd.Author__c = this.author.left(255);
             prd.PageCount__c = this.pageCount;

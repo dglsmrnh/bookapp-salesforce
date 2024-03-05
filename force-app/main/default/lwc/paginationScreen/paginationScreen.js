@@ -41,20 +41,25 @@ export default class PaginationScreen extends LightningElement {
 			}
 		} 
 		else {
-			this.currentIndex += bookList.length;
+			console.log(this.bookList.length);
+			this.currentIndex += this.bookList.length;
 		}
 
 		this.isShowLoading = true;
 
 		getBooksData({ queryString: this.searchTerm, startIndex: this.currentIndex })
 			.then(resolve => {
-				if (resolve.totalItems > 0) {
+				if (resolve.totalItems > 0 && resolve.items != null ) {
 					this.isShowSeeMoreButton = true;
 					if(clear) {
 						this.bookList = [...resolve.items];
 					} 
 					else {
 						this.bookList = [...this.bookList, ...resolve.items];
+					}
+
+					if (resolve.totalItems < this.currentIndex + 1) {
+						this.isShowSeeMoreButton = false;
 					}
 				}
 				else {
@@ -85,7 +90,7 @@ export default class PaginationScreen extends LightningElement {
 		this.searchProducts(true);
 	}
 
-	handleSearchMore(event) {
+	handleSearchMore() {
 		if(this.searchTerm.length > 0) {
 			this.searchProducts(false);
 		}
