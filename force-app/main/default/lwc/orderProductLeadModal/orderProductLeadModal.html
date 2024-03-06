@@ -2,7 +2,7 @@
   @description       : 
   @author            : dglsmrnh
   @group             : 
-  @last modified on  : 03-05-2024
+  @last modified on  : 03-06-2024
   @last modified by  : dglsmrnh
 -->
 <template>
@@ -15,10 +15,11 @@
             label="Trecho do livro"
             max-length="500"
             min-length="90"
+            onchange={handleTextAreaChange}
         >
         </lightning-textarea>
       </lightning-layout-item>
-      <lightning-layout-item class="slds-var-m-large" size="12">
+      <lightning-layout-item class="slds-var-m-top_large" size="12">
 				<lightning-button 
 					icon-name="utility:search"  
 					size="medium" 
@@ -32,7 +33,7 @@
           <div class="container__field-readOnly">
             ARI
             <p class="text__titleBold">
-              {score.ari}
+              {score.features.ari}
             </p>
           </div>
         </lightning-layout-item>
@@ -40,7 +41,7 @@
           <div class="container__field-readOnly">
             Índice de Flesch
             <p class="text__titleBold">
-              {score.flesch}
+              {score.features.flesch}
             </p>
           </div>
         </lightning-layout-item>
@@ -48,7 +49,7 @@
           <div class="container__field-readOnly">
             Índice Coleman-Liau
             <p class="text__titleBold">
-              {score.colemanLiau}
+              {score.features.colemanLiau}
             </p>
           </div>
         </lightning-layout-item>
@@ -56,7 +57,7 @@
           <div class="container__field-readOnly">
             Índice Gulpease
             <p class="text__titleBold">
-              {score.gulpease}
+              {score.features.gulpease}
             </p>
           </div>
         </lightning-layout-item>

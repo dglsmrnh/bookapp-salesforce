@@ -7,10 +7,10 @@ export default class OrderProductLeadModal extends LightningModal {
   @api book;
   @track excerpt;
 
-  score = {};
+  @track score;
 
   labels = {
-		errorMessage: 'Não foi possível continuar'
+		errorMessage: 'Não foi possível completar a requisição.'
 	}
 
   handleOkay() {
@@ -20,6 +20,7 @@ export default class OrderProductLeadModal extends LightningModal {
   handleSearch() {
     getBookScore({ excerpt: this.excerpt })
 			.then(resolve => {
+				console.log(resolve);
 				this.score = resolve;
 			})
 			.catch(error => {
@@ -29,6 +30,10 @@ export default class OrderProductLeadModal extends LightningModal {
 			.finally(() => {
 			});
   }
+
+	handleTextAreaChange(event) {
+		this.excerpt = event.detail.value;
+	}
 
   handlerDispatchToast(title, message, variant) {
 		this.dispatchEvent(
