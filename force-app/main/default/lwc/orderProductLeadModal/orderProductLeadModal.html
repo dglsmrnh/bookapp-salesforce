@@ -1,0 +1,69 @@
+<!--
+  @description       : 
+  @author            : dglsmrnh
+  @group             : 
+  @last modified on  : 03-05-2024
+  @last modified by  : dglsmrnh
+-->
+<template>
+  <lightning-modal-header label={book.volumeInfo.title}></lightning-modal-header>
+  <lightning-modal-body>
+    <lightning-layout multiple-rows>
+      <lightning-layout-item class="content__field" size="12">
+        <lightning-textarea
+            value={excerpt}
+            label="Trecho do livro"
+            max-length="500"
+            min-length="90"
+        >
+        </lightning-textarea>
+      </lightning-layout-item>
+      <lightning-layout-item class="slds-var-m-large" size="12">
+				<lightning-button 
+					icon-name="utility:search"  
+					size="medium" 
+					alternative-text="Consultar score"
+					label="Consultar score" 
+					onclick={handleSearch}
+          variant="brand"></lightning-button>
+			</lightning-layout-item>
+      <template if:true={score}>
+        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3">
+          <div class="container__field-readOnly">
+            ARI
+            <p class="text__titleBold">
+              {score.ari}
+            </p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3">
+          <div class="container__field-readOnly">
+            Índice de Flesch
+            <p class="text__titleBold">
+              {score.flesch}
+            </p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3">
+          <div class="container__field-readOnly">
+            Índice Coleman-Liau
+            <p class="text__titleBold">
+              {score.colemanLiau}
+            </p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3">
+          <div class="container__field-readOnly">
+            Índice Gulpease
+            <p class="text__titleBold">
+              {score.gulpease}
+            </p>
+          </div>
+        </lightning-layout-item>
+      </template>
+    </lightning-layout>
+  </lightning-modal-body>
+  <lightning-modal-footer>
+      <lightning-button label="Incluir livro" onclick={handleOkay} variant="success"></lightning-button>
+  </lightning-modal-footer>
+</template>

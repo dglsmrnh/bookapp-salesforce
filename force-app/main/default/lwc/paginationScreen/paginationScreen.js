@@ -8,6 +8,10 @@ export default class PaginationScreen extends LightningElement {
 
 	currentIndex = 0;
 
+	labels = {
+		errorMessage: 'Não foi possível continuar'
+	}
+
 	@track
 	bookList = [];
 	

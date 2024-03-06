@@ -12,14 +12,16 @@
 				</div>
 
 				<div class="slds-no-flex">
-					<button
-						class="slds-button button-add"
-						onclick={onClickAddBook}
-					>
-						<svg class="slds-icon slds-icon-text-default slds-icon_x-small icon-add" aria-hidden="true">
-							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#add"></use>
-						</svg>
-					</button>
+					<template if:false={book.isProduct}>
+						<button
+							class="slds-button button-add"
+							onclick={onClickAddBook}
+						>
+							<svg class="slds-icon slds-icon-text-default slds-icon_x-small icon-add" aria-hidden="true">
+								<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#add"></use>
+							</svg>
+						</button>
+					</template>
 				</div>
 			</header>
 		</div>

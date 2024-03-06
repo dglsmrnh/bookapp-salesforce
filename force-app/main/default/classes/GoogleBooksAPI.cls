@@ -2,14 +2,14 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 03-01-2024
+ * @last modified on  : 03-05-2024
  * @last modified by  : dglsmrnh
 **/
 public with sharing class GoogleBooksAPI {
   // Method to retrieve data from the Google Books API
   @AuraEnabled(cacheable=false)
-  public static GoogleBooksResponse getBooksData(String queryString, Integer startIndex) {
-    try{  
+  public static Response getBooksData(String queryString, Integer startIndex) {
+    try {  
       if(String.isEmpty(queryString)) {
         throw new CalloutException('query not informed');
       }
@@ -42,13 +42,14 @@ public with sharing class GoogleBooksAPI {
       // Send the HTTP request and get the response
       HttpResponse response = http.send(request);
 
-      GoogleBooksResponse booksResponse;
+      Response booksResponse;
 
       // Parse the response
       if (response.getStatusCode() == 200) {
           // Response is successful (status code 200)
-          // Deserialize the JSON response into GoogleBooksResponse instance
-          booksResponse = (GoogleBooksResponse) JSON.deserialize(response.getBody(), GoogleBooksResponse.class);
+          // Deserialize the JSON response into Response instance
+          booksResponse = (Response) JSON.deserialize(response.getBody(), Response.class);
+          booksResponse.setISBN();
           System.debug(booksResponse);
 
       } else {
@@ -56,23 +57,71 @@ public with sharing class GoogleBooksAPI {
           throw new CalloutException(response.getStatus());
       }
 
-      return booksResponse;
+      return getProduct(booksResponse);
 
     }catch (Exception e) {
         // Exception handling
-        System.debug('Exception occurred: ' + e.getMessage());
+        throw new CalloutException('Exception occurred: ' + e.getMessage());
     }
-
-    return null;
   }
 
-  public class GoogleBooksResponse {
+  public static Response getProduct(Response bookResponse) {
+    System.debug('getProduct');
+    Set<String> isbnSet = new Set<String>();
+    Map<String, BookItem> itemMap = new Map<String, BookItem>();
+
+    if(bookResponse.items != null) {
+      for(BookItem item : bookResponse.items) {
+        item.isProduct = false;
+        if(item.isbn13 != null || item.isbn10 != null) {
+          isbnSet.add((item.isbn13 == null ? item.isbn10 : item.isbn13));
+          itemMap.put((item.isbn13 == null ? item.isbn10 : item.isbn13), item);
+        }
+      }
+
+      if(!isbnSet.isEmpty()) {
+        List<Product2> prdList = [SELECT Id, ISBN_13__c FROM Product2 WHERE ISBN_13__c IN: isbnSet];
+
+        for(Product2 prd : prdList) {
+          if(itemMap.containsKey(prd.ISBN_13__c.trim())) {
+            itemMap.get(prd.ISBN_13__c.trim()).productId = prd.Id;
+            itemMap.get(prd.ISBN_13__c.trim()).isProduct = true;
+          }
+        }
+      }
+    }
+    return bookResponse;
+  }
+
+  public class Response {
     @AuraEnabled
     public String kind;
     @AuraEnabled
     public Integer totalItems;
     @AuraEnabled
     public List<BookItem> items;
+
+    public void setISBN() {
+      if(this.items != null) {
+        for(BookItem item : this.items) {
+          if(item.volumeInfo.industryIdentifiers != null) {
+            for(IndustryIdentifier ind : item.volumeInfo.industryIdentifiers) {
+              if(ind.type == 'ISBN_10') {
+                item.isbn10 = ind.identifier;
+
+                if(item.isbn13 == null) {
+                  item.isbn13 = ind.identifier;
+                }
+              }
+
+              if(ind.type == 'ISBN_13') {
+                item.isbn13 = ind.identifier;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   public class BookItem {
@@ -92,6 +141,14 @@ public with sharing class GoogleBooksAPI {
     public AccessInfo accessInfo;
     @AuraEnabled 
     public SearchInfo searchInfo;
+    @AuraEnabled
+    public String productId;
+    @AuraEnabled
+    public Boolean isProduct;
+    @AuraEnabled
+    public String isbn10;
+    @AuraEnabled
+    public String isbn13;
   }
 
   public class VolumeInfo {
