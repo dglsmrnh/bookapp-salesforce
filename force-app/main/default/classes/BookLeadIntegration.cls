@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 03-05-2024
+ * @last modified on  : 03-13-2024
  * @last modified by  : dglsmrnh
 **/
 @RestResource(urlMapping='/recommendation')
@@ -13,7 +13,7 @@ global with sharing class BookLeadIntegration {
     @HttpPost
     global static Response BookLeadIntegration(Request request) {
         try {
-            if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() <= 0) {
+            if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() > 0) {
                 throw new CalloutException('Desculpe, esse livro já foi recomendado.');
             }
             Product2 prd = request.book.serializeProduct();
@@ -59,7 +59,9 @@ global with sharing class BookLeadIntegration {
             prd.RecordTypeId = PRODUCT_RECORDTYPE;
             prd.DisplayUrl = this.thumbnail;
             prd.Description = this.description.left(4000);
-            prd.PublishedDate__c = this.publishDate != null ? Date.valueOf(this.publishDate) : null;
+            if(this.publishDate != null) {
+                prd.PublishedDate__c = this.publishDate.length() == 10 ? Date.valueOf(this.publishDate) : null;
+            }
             prd.Publisher__c = this.publisher;
 
             return prd;
@@ -85,7 +87,7 @@ global with sharing class BookLeadIntegration {
             BookLead__c bk = new BookLead__c();
             bk.Book__c = productId;
             bk.Name = this.book.name.left(80);
-            bk.Account__c = this.accountId;
+            bk.Account__c = this.accountId == null ? null : this.accountId;
             bk.ARI__c = this.ari;
             bk.Score__c = this.score;
             bk.Flesch__c = this.flesch;
@@ -99,7 +101,9 @@ global with sharing class BookLeadIntegration {
     }
 
     global class Response {
+        @AuraEnabled
         global Boolean success { get; set; }
+        @AuraEnabled
         global String message {get; set; }
 
         global Response() {
@@ -112,7 +116,7 @@ global with sharing class BookLeadIntegration {
         }
     }
 
-    private static void linkCategories(List<Category> categories, Id productId) {
+    public static void linkCategories(List<Category> categories, Id productId) {
 
         // Get default catalog id to product type
         DefaultCatalog__mdt defaultCatalog = DefaultCatalog__mdt.getInstance('Book');
@@ -148,9 +152,5 @@ global with sharing class BookLeadIntegration {
         if(!prdCategoryList.IsEmpty()) {
             insert prdCategoryList;
         }
-    }
-
-    private class RecommendationException extends Exception {
-    }
-    
+    }    
 }

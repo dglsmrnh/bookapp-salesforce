@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : dglsmrnh
+ * @group             : 
+ * @last modified on  : 03-13-2024
+ * @last modified by  : dglsmrnh
+**/
 public with sharing class PaginationScreenController {
 	@AuraEnabled
 	public static Integer getProductSize() {
@@ -175,5 +182,67 @@ public with sharing class PaginationScreenController {
 			this.isSelected = false;
 			this.productClass = 'slds-card container__product';
 		}
+	}
+
+	@AuraEnabled
+	public static BookLeadIntegration.Response addBook(GoogleBooksAPI.BookItem bookItem, String bookExcerpt, BookScoreAPI.Response score) {
+		try {
+			BookLeadIntegration.Request request = convertBookItemToRequest(bookItem, bookExcerpt, score);
+			if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() > 0) {
+					throw new AuraHandledException('Desculpe, esse livro já foi recomendado.');
+			}
+			Product2 prd = request.book.serializeProduct();
+			Database.upsert(prd, Product2.ISBN_13__c, true);
+
+			BookLead__c bk = request.serializeLead(prd.Id);
+			insert bk;
+
+			BookLeadIntegration.linkCategories(request.book.categories, prd.Id);
+			return new BookLeadIntegration.Response();
+		} catch(Exception e) {
+			throw new AuraHandledException(e.getMessage());
+		}
+	}
+
+	@AuraEnabled
+	// Apex Method to convert BookItem to Request
+	public static BookLeadIntegration.Request convertBookItemToRequest(GoogleBooksAPI.BookItem bookItem, String bookExcerpt, BookScoreAPI.Response response) {
+		BookLeadIntegration.Request request = new BookLeadIntegration.Request();
+		request.bookExcerpt = bookExcerpt;
+		request.score = Integer.valueOf(response.probability);
+		request.ari = response.features.ari;
+		request.colemanLiau = response.features.colemanLiau;
+		request.flesch = response.features.flesch;
+		request.gulpease = response.features.gulpease;
+
+		System.debug(bookItem);
+
+		if(bookItem != null) {
+			request.book = new BookLeadIntegration.Book();
+			request.book.id = bookItem.id;
+			request.book.name = bookItem.volumeInfo.title;
+			request.book.isbn13 = bookItem.isbn13;
+			request.book.isbn10 = bookItem.isbn10;
+			request.book.author = bookItem.volumeInfo.authors != null && !bookItem.volumeInfo.authors.isEmpty() ? String.join(bookItem.volumeInfo.authors, ', ') : null;
+			request.book.pageCount = bookItem.volumeInfo.pageCount;
+			// request.book.averageRating = bookItem.volumeInfo.averageRating;
+			request.book.description = bookItem.volumeInfo.description;
+			request.book.thumbnail = bookItem.volumeInfo.imageLinks != null ? bookItem.volumeInfo.imageLinks.thumbnail : null;
+			request.book.publisher = bookItem.volumeInfo.publisher;
+			request.book.publishDate = bookItem.volumeInfo.publishedDate;
+			request.book.maturityRating = bookItem.volumeInfo.maturityRating;
+			request.book.type = bookItem.volumeInfo.printType;
+			request.book.categories = new List<BookLeadIntegration.Category>();
+
+			if(bookItem.volumeInfo.categories != null) {
+				for(String categoryName : bookItem.volumeInfo.categories) {
+					BookLeadIntegration.Category category = new BookLeadIntegration.Category();
+					category.name = categoryName;
+					request.book.categories.add(category);
+				}
+			}
+		}
+
+		return request;
 	}
 }

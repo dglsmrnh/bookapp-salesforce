@@ -2,8 +2,8 @@
  * @description       : 
  * @author            : douglas.marinho@globant.com
  * @group             : 
- * @last modified on  : 02-29-2024
- * @last modified by  : douglas.marinho@globant.com
+ * @last modified on  : 03-13-2024
+ * @last modified by  : dglsmrnh
 **/
 public with sharing class ApprovalScreenController {
 
@@ -433,7 +433,7 @@ public with sharing class ApprovalScreenController {
 			'		 ProcessInstance.SubmittedBy.Name ' +
 			'	FROM ProcessInstanceWorkitem ' +
 			' #WHERE# ' +
-			'  ORDER BY ProcessInstance.ProcessDefinition.TableEnumOrId, ' +
+			'  ORDER BY CreatedDate DESC, ProcessInstance.ProcessDefinition.TableEnumOrId, ' +
 			'			ProcessInstance.Status, ' +
 			'			ProcessInstance.TargetObject.Name ';
 	}

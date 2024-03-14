@@ -2,10 +2,11 @@
   @description       : 
   @author            : dglsmrnh
   @group             : 
-  @last modified on  : 03-06-2024
+  @last modified on  : 03-13-2024
   @last modified by  : dglsmrnh
 -->
 <template>
+  <lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
   <lightning-modal-header label={book.volumeInfo.title}></lightning-modal-header>
   <lightning-modal-body>
     <lightning-layout multiple-rows>
@@ -13,13 +14,13 @@
         <lightning-textarea
             value={excerpt}
             label="Trecho do livro"
-            max-length="500"
             min-length="90"
             onchange={handleTextAreaChange}
+            class="textAreaBody"
         >
         </lightning-textarea>
       </lightning-layout-item>
-      <lightning-layout-item class="slds-var-m-top_large" size="12">
+      <lightning-layout-item class="slds-var-m-top_large slds-var-m-bottom_large" size="12">
 				<lightning-button 
 					icon-name="utility:search"  
 					size="medium" 
@@ -29,11 +30,11 @@
           variant="brand"></lightning-button>
 			</lightning-layout-item>
       <template if:true={score}>
-        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3">
+        <lightning-layout-item class="content__field" size="12" medium-device-size="3" large-device-size="3" padding="horizontal-medium">
           <div class="container__field-readOnly">
             ARI
             <p class="text__titleBold">
-              {score.features.ari}
+              <lightning-formatted-number value={score.features.ari} maximum-fraction-digits="2"></lightning-formatted-number>
             </p>
           </div>
         </lightning-layout-item>
@@ -41,7 +42,7 @@
           <div class="container__field-readOnly">
             Índice de Flesch
             <p class="text__titleBold">
-              {score.features.flesch}
+              <lightning-formatted-number value={score.features.flesch} maximum-fraction-digits="2"></lightning-formatted-number>
             </p>
           </div>
         </lightning-layout-item>
@@ -49,7 +50,7 @@
           <div class="container__field-readOnly">
             Índice Coleman-Liau
             <p class="text__titleBold">
-              {score.features.colemanLiau}
+              <lightning-formatted-number value={score.features.colemanLiau} maximum-fraction-digits="2"></lightning-formatted-number>
             </p>
           </div>
         </lightning-layout-item>
@@ -57,7 +58,7 @@
           <div class="container__field-readOnly">
             Índice Gulpease
             <p class="text__titleBold">
-              {score.features.gulpease}
+              <lightning-formatted-number value={score.features.gulpease} maximum-fraction-digits="2"></lightning-formatted-number>
             </p>
           </div>
         </lightning-layout-item>
@@ -65,6 +66,8 @@
     </lightning-layout>
   </lightning-modal-body>
   <lightning-modal-footer>
+    <template if:true={score}>
       <lightning-button label="Incluir livro" onclick={handleOkay} variant="success"></lightning-button>
+    </template>
   </lightning-modal-footer>
 </template>

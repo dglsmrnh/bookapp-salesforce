@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 03-05-2024
+ * @last modified on  : 03-13-2024
  * @last modified by  : dglsmrnh
 **/
 public with sharing class GoogleBooksAPI {
@@ -95,11 +95,11 @@ public with sharing class GoogleBooksAPI {
 
   public class Response {
     @AuraEnabled
-    public String kind;
+    public String kind { get; set; }
     @AuraEnabled
-    public Integer totalItems;
+    public Integer totalItems { get; set; }
     @AuraEnabled
-    public List<BookItem> items;
+    public List<BookItem> items { get; set; }
 
     public void setISBN() {
       if(this.items != null) {
@@ -126,181 +126,181 @@ public with sharing class GoogleBooksAPI {
 
   public class BookItem {
     @AuraEnabled 
-    public String kind;
+    public String kind { get; set; }
     @AuraEnabled 
-    public String id;
+    public String id { get; set; }
     @AuraEnabled 
-    public String etag;
+    public String etag { get; set; }
     @AuraEnabled 
-    public String selfLink;
+    public String selfLink { get; set; }
     @AuraEnabled 
-    public VolumeInfo volumeInfo;
+    public VolumeInfo volumeInfo { get; set; }
     @AuraEnabled 
-    public SaleInfo saleInfo;
+    public SaleInfo saleInfo { get; set; }
     @AuraEnabled 
-    public AccessInfo accessInfo;
+    public AccessInfo accessInfo { get; set; }
     @AuraEnabled 
-    public SearchInfo searchInfo;
+    public SearchInfo searchInfo { get; set; }
     @AuraEnabled
-    public String productId;
+    public String productId { get; set; }
     @AuraEnabled
-    public Boolean isProduct;
+    public Boolean isProduct { get; set; }
     @AuraEnabled
-    public String isbn10;
+    public String isbn10 { get; set; }
     @AuraEnabled
-    public String isbn13;
+    public String isbn13 { get; set; }
   }
 
   public class VolumeInfo {
     @AuraEnabled
-    public String title;
+    public String title { get; set; }
     @AuraEnabled
-    public List<String> authors;
+    public List<String> authors { get; set; }
     @AuraEnabled
-    public String publisher;
+    public String publisher { get; set; }
     @AuraEnabled
-    public String publishedDate;
+    public String publishedDate { get; set; }
     @AuraEnabled
-    public String description;
+    public String description { get; set; }
     @AuraEnabled
-    public List<IndustryIdentifier> industryIdentifiers;
+    public List<IndustryIdentifier> industryIdentifiers { get; set; }
     @AuraEnabled
-    public ReadingModes readingModes;
+    public ReadingModes readingModes { get; set; }
     @AuraEnabled
-    public Integer pageCount;
+    public Integer pageCount { get; set; }
     @AuraEnabled
-    public String printType;
+    public String printType { get; set; }
     @AuraEnabled
-    public List<String> categories;
+    public List<String> categories { get; set; }
     @AuraEnabled
-    public String maturityRating;
+    public String maturityRating { get; set; }
     @AuraEnabled
-    public Boolean allowAnonLogging;
+    public Boolean allowAnonLogging { get; set; }
     @AuraEnabled
-    public String contentVersion;
+    public String contentVersion { get; set; }
     @AuraEnabled
-    public PanelizationSummary panelizationSummary;
+    public PanelizationSummary panelizationSummary { get; set; }
     @AuraEnabled
-    public ImageLinks imageLinks;
+    public ImageLinks imageLinks { get; set; }
     @AuraEnabled
-    public String language;
+    public String language { get; set; }
     @AuraEnabled
-    public String previewLink;
+    public String previewLink { get; set; }
     @AuraEnabled
-    public String infoLink;
+    public String infoLink { get; set; }
     @AuraEnabled
-    public String canonicalVolumeLink;
+    public String canonicalVolumeLink { get; set; }
   }
 
   public class SaleInfo {
     @AuraEnabled
-    public String country;
+    public String country { get; set; }
     @AuraEnabled
-    public String saleability;
+    public String saleability { get; set; }
     @AuraEnabled
-    public Boolean isEbook;
+    public Boolean isEbook { get; set; }
     @AuraEnabled
-    public ListPrice listPrice;
+    public ListPrice listPrice { get; set; }
     @AuraEnabled
-    public RetailPrice retailPrice;
+    public RetailPrice retailPrice { get; set; }
     @AuraEnabled
-    public String buyLink;
+    public String buyLink { get; set; }
     @AuraEnabled
-    public List<Offer> offers;
+    public List<Offer> offers { get; set; }
   }
 
   public class AccessInfo {
     @AuraEnabled
-    public String country;
+    public String country { get; set; }
     @AuraEnabled
-    public String viewability;
+    public String viewability { get; set; }
     @AuraEnabled
-    public Boolean embeddable;
+    public Boolean embeddable { get; set; }
     @AuraEnabled
-    public Boolean publicDomain;
+    public Boolean publicDomain { get; set; }
     @AuraEnabled
-    public String textToSpeechPermission;
+    public String textToSpeechPermission { get; set; }
     @AuraEnabled
-    public Epub epub;
+    public Epub epub { get; set; }
     @AuraEnabled
-    public Pdf pdf;
+    public Pdf pdf { get; set; }
     @AuraEnabled
-    public String webReaderLink;
+    public String webReaderLink { get; set; }
     @AuraEnabled
-    public String accessViewStatus;
+    public String accessViewStatus { get; set; }
     @AuraEnabled
-    public Boolean quoteSharingAllowed;
+    public Boolean quoteSharingAllowed { get; set; }
   }
 
   public class ReadingModes {
     @AuraEnabled
-    public Boolean text;
+    public Boolean text { get; set; }
     @AuraEnabled
-    public Boolean image;
+    public Boolean image { get; set; }
   }
 
   public class PanelizationSummary {
     @AuraEnabled
-    public Boolean containsEpubBubbles;
+    public Boolean containsEpubBubbles { get; set; }
     @AuraEnabled
-    public Boolean containsImageBubbles;
+    public Boolean containsImageBubbles { get; set; }
   }
 
   public class ImageLinks {
     @AuraEnabled
-    public String smallThumbnail;
+    public String smallThumbnail { get; set; }
     @AuraEnabled
-    public String thumbnail;
+    public String thumbnail { get; set; }
   }
 
   public class IndustryIdentifier {
     @AuraEnabled
-    public String type;
+    public String type { get; set; }
     @AuraEnabled
-    public String identifier;
+    public String identifier { get; set; }
   }
 
   public class ListPrice {
     @AuraEnabled
-    public Decimal amount;
+    public Decimal amount { get; set; }
     @AuraEnabled
-    public String currencyCode;
+    public String currencyCode { get; set; }
   }
 
   public class RetailPrice {
     @AuraEnabled
-    public Decimal amount;
+    public Decimal amount { get; set; }
     @AuraEnabled
-    public String currencyCode;
+    public String currencyCode { get; set; }
   }
 
   public class Offer {
     @AuraEnabled
-    public Integer finskyOfferType;
+    public Integer finskyOfferType { get; set; }
     @AuraEnabled
-    public ListPrice listPrice;
+    public ListPrice listPrice { get; set; }
     @AuraEnabled
-    public RetailPrice retailPrice;
+    public RetailPrice retailPrice { get; set; }
     @AuraEnabled
-    public Boolean giftable;
+    public Boolean giftable { get; set; }
   }
 
   public class Epub {
     @AuraEnabled
-    public Boolean isAvailable;
+    public Boolean isAvailable { get; set; }
     @AuraEnabled
-    public String acsTokenLink;
+    public String acsTokenLink { get; set; }
   }
 
   public class Pdf {
     @AuraEnabled
-    public Boolean isAvailable;
+    public Boolean isAvailable { get; set; }
     @AuraEnabled
-    public String acsTokenLink;
+    public String acsTokenLink { get; set; }
   }
 
   public class SearchInfo {
     @AuraEnabled
-    public String textSnippet;
+    public String textSnippet { get; set; }
   }    
 }

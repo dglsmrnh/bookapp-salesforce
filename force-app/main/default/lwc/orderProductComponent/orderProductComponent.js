@@ -17,6 +17,10 @@ export default class OrderProductComponent extends LightningElement {
 			description: 'Accessible description of modal\'s purpose',
 			book: this.book,
 		});
+
+		if(result === 'okay') {
+			this.book.isProduct = true;
+		}
 		// if modal closed with X button, promise returns result = 'undefined'
 		// if modal closed with OK button, promise returns result = 'okay'
 		console.log(result);
