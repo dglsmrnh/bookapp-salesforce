@@ -1,0 +1,46 @@
+<!--
+  @description       : 
+  @author            : douglas.marinho@globant.com
+  @group             : 
+  @last modified on  : 03-14-2024
+  @last modified by  : douglas.marinho@globant.com
+-->
+<template>
+  <lightning-quick-action-panel header="Escolher jogo">
+    <lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
+    <lightning-layout>
+      <lightning-layout-item class="content__field" size="12">
+        <lightning-combobox
+            name="gameType"
+            label="Selecione o tipo de jogo"
+            value={selectedGameType}
+            options={gameTypeOptions}
+            onchange={handleGameTypeChange}>
+        </lightning-combobox>
+      </lightning-layout-item>
+    </lightning-layout>
+    <lightning-layout multiple-rows>
+      <template for:each={pairValues} for:item="pair">
+        <lightning-layout-item class="content__field" size="6" key={pair.value}>
+          <lightning-card title={pair.value}>    
+            <p class="slds-p-horizontal_small">
+              <lightning-file-upload
+                  label="Faça o upload de uma imagem"
+                  name={pair.value}
+                  accept=".jpg, .png"
+                  data-pair={pair.value}
+                  record-id={recordId}
+                  onuploadfinished={handleUploadFinished}
+                  disabled={pair.uploaded}>
+              </lightning-file-upload>
+              {pair.img}
+            </p>
+          </lightning-card>
+        </lightning-layout-item>
+      </template>
+    </lightning-layout>
+    <div slot="footer">
+      <lightning-button label="Save" onclick={handleSuccess} variant="brand"></lightning-button>  
+    </div>
+  </lightning-quick-action-panel>
+</template>
