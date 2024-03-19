@@ -22,6 +22,7 @@ public without sharing class AccountTriggerHandler extends TriggerHandler{
 
   public override void afterInsert(){
     AccountHelper.createDefaultClass((Map<Id,Account>)newMap);
+    AccountHelper.createEmptyInventory(newRecordList);
   }
 
   public override void beforeUpdate(){

@@ -50,7 +50,7 @@ public without sharing class AccountHelper {
 
             for(Asset asset : assetList) {
                 if(newMap.containsKey(asset.AccountId)) {
-                    Account acc = newMap.get(asset.AccountId);
+                    Account acc = newMap.get(asset.AccountId).clone(true, true, false, false);
                     acc.DefaultClass__c = asset.Id;
                     accountList.add(acc);
                 }
@@ -59,5 +59,40 @@ public without sharing class AccountHelper {
         AccountTriggerHandler.disableTrigger();
         update accountList;
         AccountTriggerHandler.enableTrigger();
+    }
+
+    public static void createEmptyInventory(List<Account> newRecordList) {
+
+        List<Inventory__c> inventoriesToInsert = new List<Inventory__c>();
+        for(Account acc : newRecordList) {
+            Inventory__c invent = new Inventory__c(
+                Account__c = acc.Id,
+                Coins__c = 10
+            );
+            inventoriesToInsert.add(invent);
+        }
+        String inventoriesStringified = JSON.serialize(inventoriesToInsert);
+
+        insertInventories(inventoriesStringified);
+    }
+
+    @future
+    public static void insertInventories(String inventoriesStringified) { //Future method only allows for primitive variables to be sent as parameters
+        List<Inventory__c> inventoriesToInsert = (List<Inventory__c>)JSON.deserialize(inventoriesStringified, List<Inventory__c>.class);
+        List<InventoryItem__c> itemsToInsert = new List<InventoryItem__c>();
+
+        for(Inventory__c invent : inventoriesToInsert) {
+            for(Potion__mdt pot : [SELECT Id, Color__c FROM Potion__mdt]) {
+                InventoryItem__c newItem = new InventoryItem__c(
+                    Color__c = pot.Color__c,
+                    Quantity__c = 0,
+                    Inventory__r = invent
+                );
+                itemsToInsert.add(newItem);
+            }
+        }
+
+        insert(inventoriesToInsert);
+        insert(itemsToInsert);
     }
 }
