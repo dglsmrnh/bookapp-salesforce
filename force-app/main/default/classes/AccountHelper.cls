@@ -81,18 +81,19 @@ public without sharing class AccountHelper {
         List<Inventory__c> inventoriesToInsert = (List<Inventory__c>)JSON.deserialize(inventoriesStringified, List<Inventory__c>.class);
         List<InventoryItem__c> itemsToInsert = new List<InventoryItem__c>();
 
+        insert(inventoriesToInsert);
+
         for(Inventory__c invent : inventoriesToInsert) {
             for(Potion__mdt pot : [SELECT Id, Color__c FROM Potion__mdt]) {
                 InventoryItem__c newItem = new InventoryItem__c(
                     Color__c = pot.Color__c,
                     Quantity__c = 0,
-                    Inventory__r = invent
+                    Inventory__c = invent.Id
                 );
                 itemsToInsert.add(newItem);
             }
         }
 
-        insert(inventoriesToInsert);
         insert(itemsToInsert);
     }
 }

@@ -49,7 +49,7 @@ private class AccountHelperTest {
         List<Inventory__c> inventList = [SELECT Id FROM Inventory__c WHERE Account__c =: testAccount.Id];
         List<InventoryItem__c> itemList = [SELECT Id FROM InventoryItem__c WHERE Inventory__c IN: inventList];
 
-        Assert.areEqual(inventList, 1, 'The inserted account has more or less than 1 inventory. It was expected to have exactly 1 inventory record.');
+        Assert.areEqual(inventList.size(), 1, 'The inserted account has more or less than 1 inventory. It was expected to have exactly 1 inventory record.');
         Assert.areEqual(itemList.size(), potionMetaList.size(), 'The number of metadata records and recorded potion items is not the same.');
     }
 }
