@@ -10,6 +10,7 @@ import { RefreshEvent } from "lightning/refresh";
 export default class ConvertBookLead extends LightningElement {
   @api recordId;
   @api objectApiName;
+  @track currentStep = 1;
 
   isShowLoading = false
 
@@ -20,10 +21,22 @@ export default class ConvertBookLead extends LightningElement {
     return getFieldValue(this.contbookLeadact.data, NAME_FIELD);
   }
 
+  get lastStep() {
+    return this.currentStep == 2;
+  }
+
+  nextStep() {
+    this.currentStep += 1;
+  }
+
+  prevStep() {
+    this.currentStep -= 1;
+  }
+
   selectedGameType = '';
   gameTypeOptions = [
-      { label: 'Memoria', value: 'Memory' },
-      { label: 'Caça-Palavra', value: 'WordSearch' }
+      { label: 'Memoria', value: 'Memory' } //,
+      // { label: 'Caça-Palavra', value: 'WordSearch' }
   ];
 
   gameData = {};
@@ -34,7 +47,12 @@ export default class ConvertBookLead extends LightningElement {
   
   labels = {
 		errorMessage: 'Não foi possível completar a requisição.',
-		saveMessage: 'Jogo cadastrado com sucesso.'
+		saveMessage: 'Jogo cadastrado com sucesso.',
+    header: 'Liberar o livro',
+    steps: {
+      step1: 'Escolher jogo',
+      step2: 'Checkpoints'
+    }
 	}
 
   connectedCallback() {

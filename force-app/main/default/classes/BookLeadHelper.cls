@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglrmnh
  * @group             : 
- * @last modified on  : 03-13-2024
+ * @last modified on  : 03-21-2024
  * @last modified by  : dglsmrnh
 **/
 public with sharing class BookLeadHelper {
@@ -137,5 +137,14 @@ public with sharing class BookLeadHelper {
         req.setNextApproverIds(new Id[] {userId});
 
         return req;
+    }
+
+    public static void changeStatus(Map<Id,BookLead__c> oldMap, Map<Id,BookLead__c> newMap) {
+        for(BookLead__c bk : newMap.values()) {
+            if(oldMap.get(bk.Id).isAvailableToPublish__c == false && bk.isAvailableToPublish__c == true) {
+                bk.PublishApproved__c = true;
+                bk.Status__c = 'Closed - Converted';
+            }
+        }
     }
 }
