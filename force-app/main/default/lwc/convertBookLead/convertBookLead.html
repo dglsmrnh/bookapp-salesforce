@@ -2,7 +2,7 @@
   @description       : 
   @author            : douglas.marinho@globant.com
   @group             : 
-  @last modified on  : 03-22-2024
+  @last modified on  : 03-27-2024
   @last modified by  : dglsmrnh
 -->
 <template>
@@ -44,6 +44,19 @@
             </lightning-card>
           </lightning-layout-item>
         </template>
+      </lightning-layout>
+    </template>
+    <template if:true={lastStep}>
+      <lightning-layout multiple-rows>
+        <lightning-layout-item class="content__field" size="10" alignment-bump="top">
+          <lightning-slider label="Página do checkpoint" size="large" max={bookData.PageCount__c} value={currentCheckpoint} onchange={handleSliderChange}></lightning-slider>          
+        </lightning-layout-item>
+        <lightning-layout-item class="content__field slds-var-m-top_large" size="2">
+          <lightning-button label="Adicionar" onclick={handleAddCheckpoint}></lightning-button>
+        </lightning-layout-item>
+        <template for:each={checkpoints} for:item="checkpoint">
+          <lightning-pill key={checkpoint} label={checkpoint} data-checkpoint={checkpoint} onremove={handleRemoveCheckpoint}></lightning-pill>
+        </template>        
       </lightning-layout>
     </template>
     <div slot="footer">

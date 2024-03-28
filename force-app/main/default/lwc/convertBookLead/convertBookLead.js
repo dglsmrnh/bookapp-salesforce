@@ -3,22 +3,38 @@ import { CloseActionScreenEvent } from "lightning/actions";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { getRecord, getFieldValue } from "lightning/uiRecordApi";
 import NAME_FIELD from "@salesforce/schema/BookLead__c.Name";
+import BOOK_FIELD from "@salesforce/schema/BookLead__c.Book__c";
 import getMemoryGameData from '@salesforce/apex/ShadifyAPI.getMemoryGameData';
 import createGameMemory from '@salesforce/apex/CreateGameController.createGameMemory';
+import getProductData from '@salesforce/apex/CreateGameController.getProductData';
 import { RefreshEvent } from "lightning/refresh";
 
 export default class ConvertBookLead extends LightningElement {
   @api recordId;
   @api objectApiName;
   @track currentStep = 1;
+  @track currentCheckpoint = 0;
 
   isShowLoading = false
 
-  @wire(getRecord, { recordId: "$recordId", fields: [NAME_FIELD] })
+  @wire(getRecord, { recordId: "$recordId", fields: [NAME_FIELD, BOOK_FIELD] })
   bookLead;
 
   get name() {
-    return getFieldValue(this.contbookLeadact.data, NAME_FIELD);
+    return getFieldValue(this.bookLead.data, NAME_FIELD);
+  }
+
+  @track bookData;
+  @track checkpoints = [];
+
+  @wire(getProductData, { bookLeadId: '$recordId' })
+  wiredBookData({ error, data }) {
+      if (data) {
+          this.bookData = data;
+      } else if (error) {
+          console.error('Error to see book data! =>', error);
+          this.handlerDispatchToast(this.labels.errorMessage, '', 'error');
+      }
   }
 
   get lastStep() {
@@ -55,10 +71,6 @@ export default class ConvertBookLead extends LightningElement {
     }
 	}
 
-  connectedCallback() {
-    
-  }
-
   isFileUploaded(pairIndex) {
     return !this.fileContentVersionIds.has(pairIndex);
   }
@@ -87,10 +99,27 @@ export default class ConvertBookLead extends LightningElement {
       }
   }
 
+  handleSliderChange(event) {
+    this.currentCheckpoint = event.detail.value;
+  }
+
+  handleAddCheckpoint() {
+    if(this.currentCheckpoint > 0) {
+      this.checkpoints.push(this.currentCheckpoint);
+      this.currentCheckpoint = 0;
+    }
+  }
+
+  handleRemoveCheckpoint(event) {
+    event.preventDefault();
+    const checkpoint = event.target.dataset.checkpoint;
+    this.checkpoints = this.checkpoints.filter(item => item !== checkpoint);
+  }
+
   handleSuccess(e) {
     this.isShowLoading = true;
     if(this.selectedGameType == 'Memory') {
-      createGameMemory({recordId: this.recordId, type: this.selectedGameType, gameData: this.gameData, images: this.pairValues })
+      createGameMemory({recordId: this.recordId, type: this.selectedGameType, gameData: this.gameData, images: this.pairValues, checkpoints: this.checkpoints })
         .then(resolve => {
           this.handlerDispatchToast(this.labels.saveMessage, '', 'success');
         })
