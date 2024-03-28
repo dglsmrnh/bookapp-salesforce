@@ -98,10 +98,31 @@ global with sharing class AccountIntegration {
                 }
             }
 
-            for(Account acc : accountList) {
+            String inventoryFields = String.join(IntegrationUtils.getFields('Inventory__c'), ', ');
+            String inventoryQuery = 'SELECT ' + inventoryFields + ' FROM Inventory__c WHERE Account__r.Username__c = \'' + username + '\'';
+            List<Inventory__c> inventoryList = Database.query(inventoryQuery);
 
+            String inventoryItemFields = String.join(IntegrationUtils.getFields('InventoryItem__c'), ', ');
+            String inventoryItemQuery = 'SELECT ' + inventoryItemFields + ' FROM InventoryItem__c WHERE Inventory__c IN: inventoryList';
+            List<InventoryItem__c> inventoryItemList = Database.query(inventoryItemQuery);
+            
+            InventoryData invData = new InventoryData();
+            if(inventoryList.size() > 0) {
+                Inventory__c firstReturned = inventoryList[0];
+                invData.coins = Integer.valueOf(firstReturned.Coins__c);
+                invData.id = firstReturned.Id;
+                for(InventoryItem__c item : inventoryItemList) {
+                    InventoryItemData itemData = new InventoryItemData();
+                    itemData.color = item.Color__c;
+                    itemData.id = item.Id;
+                    itemData.quantity = Integer.valueOf(item.Quantity__c);
+                    invdata.items.add(itemData);
+                }
+            }
+
+            for(Account acc : accountList) {
                 responseBody.account.serializeAccountData(acc);
-                responseBody.character.serializeAssetData(acc, assetDataMap, questList, attrList);
+                responseBody.character.serializeAssetData(acc, assetDataMap, questList, attrList, invData);
             }
 
             return responseBody;
@@ -171,7 +192,7 @@ global with sharing class AccountIntegration {
         global AssetData race;
         global AssetData color;
         global List<AssetData> attributes;
-        // global List<Asset> inventory;
+        global InventoryData inventory;
         global List<AssetData> quests;
 
         public Map<String, Asset> serializeAssets(Account newAccount, String username) {
@@ -210,10 +231,11 @@ global with sharing class AccountIntegration {
             return assetInsertMap;
         }
 
-        public void serializeAssetData(Account acc, Map<Id, AssetData> assetDataMap, List<AssetData> questList, List<AssetData> attrList) {
+        public void serializeAssetData(Account acc, Map<Id, AssetData> assetDataMap, List<AssetData> questList, List<AssetData> attrList, InventoryData inv) {
             this.c_class = acc.DefaultClass__c != null ? assetDataMap.get(acc.DefaultClass__c) : null;
             this.race = acc.DefaultRace__c != null ? assetDataMap.get(acc.DefaultRace__c) : null;
             this.color = acc.DefaultColor__c != null ? assetDataMap.get(acc.DefaultColor__c) : null;
+            this.inventory = inv;
             this.attributes = questList.size() > 0 ? questList : null;
             this.quests = attrList.size() > 0 ? attrList : null;
         }
@@ -253,6 +275,18 @@ global with sharing class AccountIntegration {
             this.success = false;
             this.message = message;
         }
+    }
+
+    global class InventoryData {
+        global String id;
+        global Integer coins;
+        global List<InventoryItemData> items = new List<InventoryItemData>();
+    }
+
+    global class InventoryItemData {
+        global String id;
+        global Integer quantity;
+        global String color;
     }
 
     private class AccountException extends Exception {
