@@ -80,14 +80,23 @@ global with sharing class QuestIntegration {
     global static PostResponse createQuest(PostRequest request) {
         try {
             String username = request.username;
+            String groupId = request.groupId;
             Id questId = Id.valueOf(request.id);
 
             if([SELECT Id FROM Product2 WHERE Id =: questId AND IsActive = true].size() < 1) {
-                throw new CalloutException('quest not available.');
+                throw new CalloutException('Quest not available.');
             }
 
             Account account = [SELECT Id, Username__c FROM Account WHERE Username__c =: username];
             Product2 product = [SELECT Id, Name FROM Product2 WHERE Id =: questId AND IsActive = true];
+            AdventureGroup__c advGroup;
+
+            if(String.isNotBlank(groupId)) {
+                advGroup = [SELECT Id FROM AdventureGroup__c];
+            }
+            if(advGroup == null) {
+                throw new CalloutException('Group not available.');
+            }
 
             Asset asset = new Asset();
             asset.AccountId = account.Id;
@@ -95,6 +104,7 @@ global with sharing class QuestIntegration {
             asset.Name = product.Name;
             asset.RecordTypeId = ASSET_RECORDTYPE;
             asset.ExternalId__c = product.Id + account.Username__c;
+            asset.AdventureGroup__c = advGroup.Id;
 
             insert asset;
 
@@ -110,6 +120,7 @@ global with sharing class QuestIntegration {
     global class PostRequest {
         global String username;
         global String id;
+        global String groupId;
     }
     
     global class PostResponse {

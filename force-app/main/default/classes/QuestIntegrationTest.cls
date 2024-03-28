@@ -62,6 +62,12 @@ private class QuestIntegrationTest {
         );
         insert testAccount;
 
+        AdventureGroup__c newGroup = new AdventureGroup__c(
+            Account__c = testAccount.Id,
+            Description__c = 'Test Adventure Group'
+        );
+        insert newGroup;
+
         Product2 testProduct = new Product2(
             Name = 'Test Product',
             IsActive = true,
@@ -79,6 +85,7 @@ private class QuestIntegrationTest {
         QuestIntegration.PostRequest postRequest = new QuestIntegration.PostRequest();
         postRequest.username = 'testuser';
         postRequest.id = testProduct.Id;
+        postRequest.groupId = newGroup.Id;
 
         request.requestBody = Blob.valueOf(JSON.serialize(postRequest));
         RestContext.request = request;
