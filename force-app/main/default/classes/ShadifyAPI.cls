@@ -120,6 +120,8 @@ public with sharing class ShadifyAPI {
     @AuraEnabled
     public String contentVersionId {get;set;}
     @AuraEnabled
+    public String contentUrl {get;set;}
+    @AuraEnabled
     public List<List<Integer>> positions {get;set;}
   }
 

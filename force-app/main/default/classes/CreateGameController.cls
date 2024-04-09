@@ -18,10 +18,37 @@ public with sharing class CreateGameController {
             //     throw new AuraHandledException('Não foram informados os checkpoints.');
             // }
 
+            List<ContentDistribution> distributionList = new List<ContentDistribution>();
+            for(PairValues pairValue : images) {
+                if(String.isNotBlank(pairValue.contentVersionId)) {
+                    ContentDistribution contDist = new ContentDistribution();
+                    contDist.Name = pairValue.img;
+                    contDist.ContentVersionId = pairValue.contentVersionId;
+                    contDist.PreferencesAllowOriginalDownload = true;
+                    contDist.PreferencesAllowPDFDownload = true;
+                    contDist.PreferencesAllowViewInBrowser = true;
+                    contDist.PreferencesExpires = false;
+                    contDist.PreferencesLinkLatestVersion = true;
+                    contDist.PreferencesNotifyOnVisit = false;
+                    contDist.PreferencesNotifyRndtnComplete = false;
+                    contDist.PreferencesPasswordRequired = false;
+                    distributionList.add(contDist);
+                }
+            }
+            Database.insert(distributionList);
+
+            Map<String, String> mapVersionIdToPublicLink = new Map<String, String>();
+            for(ContentDistribution contDist : [SELECT Id, ContentVersionId, ContentDownloadUrl FROM ContentDistribution WHERE Id IN: distributionList]) {
+                mapVersionIdToPublicLink.put(contDist.ContentVersionId, contDist.ContentDownloadUrl);
+            }
+
             for(ShadifyAPI.PairPosition pair : gameData.pairPositions) {
                 for(PairValues pairValue : images) {
                     if(pairValue.value == pair.value) {
                         pair.contentVersionId = pairValue.contentVersionId;
+                        if(mapVersionIdToPublicLink.containsKey(pairValue.contentVersionId)) {
+                            pair.contentUrl = mapVersionIdToPublicLink.get(pairValue.contentVersionId);
+                        }
                     }
                 }
             }
