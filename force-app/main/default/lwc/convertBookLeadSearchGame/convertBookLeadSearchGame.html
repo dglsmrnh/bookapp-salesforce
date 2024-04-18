@@ -1,0 +1,17 @@
+<!--
+  @description       : 
+  @author            : dglsmrnh
+  @group             : 
+  @last modified on  : 04-17-2024
+  @last modified by  : dglsmrnh
+-->
+<template>
+    <template for:each={words} for:item="word">
+        <p key={word.word}>
+            <c-input-char
+                word={word.word}
+                onwordchange={handleChange}
+            ></c-input-char>
+        </p>
+    </template>
+</template>

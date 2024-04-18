@@ -2,8 +2,8 @@
  * @description       : 
  * @author            : douglas.marinho@globant.com
  * @group             : 
- * @last modified on  : 03-14-2024
- * @last modified by  : douglas.marinho@globant.com
+ * @last modified on  : 04-17-2024
+ * @last modified by  : dglsmrnh
 **/
 public with sharing class ShadifyAPI {
 
@@ -14,7 +14,7 @@ public with sharing class ShadifyAPI {
       String apiUrl = Integration__mdt.getInstance('ShadifyMemory').Endpoint__c;
 
       // Construct the query parameters
-      String params = '?pair-size=3';
+      String params = '?pair-size=2&height=4&width=2';
 
       // Append parameters to the URL
       String fullUrl = apiUrl + params;
@@ -52,7 +52,7 @@ public with sharing class ShadifyAPI {
   }
 
   @AuraEnabled(cacheable=false)
-  public static WordSearchResponse getWordSearchGameData() {
+  public static WordSearchResponse getWordSearchGameData(String type) {
     try {  
       // Define the base URL for the Google Books API
       String apiUrl = Integration__mdt.getInstance('ShadifyWordSearch').Endpoint__c;
@@ -81,7 +81,7 @@ public with sharing class ShadifyAPI {
         // Response is successful (status code 200)
         // Deserialize the JSON response into Response instance
         String responseString = response.getBody();
-        responseString.replace('"end":', '"end_x":');
+        responseString = responseString.replace('"end":', '"endX":');
         gameResponse = (WordSearchResponse) JSON.deserialize(responseString, WordSearchResponse.class);
 
       } else {
@@ -151,9 +151,9 @@ public with sharing class ShadifyAPI {
   // Inner class for position
   public class Position {
       @AuraEnabled
-      public List<Integer> start {get;set;}
+      public List<Integer> endX {get;set;}
       @AuraEnabled
-      public List<Integer> end_x {get;set;}
+      public List<Integer> start {get;set;}
   }
     
 }

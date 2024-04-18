@@ -5,7 +5,8 @@ import { getRecord, getFieldValue } from "lightning/uiRecordApi";
 import NAME_FIELD from "@salesforce/schema/BookLead__c.Name";
 import BOOK_FIELD from "@salesforce/schema/BookLead__c.Book__c";
 import getMemoryGameData from '@salesforce/apex/ShadifyAPI.getMemoryGameData';
-import createGameMemory from '@salesforce/apex/CreateGameController.createGameMemory';
+import getWordSearchGameData from '@salesforce/apex/ShadifyAPI.getWordSearchGameData';
+import createGame from '@salesforce/apex/CreateGameController.createGame';
 import getProductData from '@salesforce/apex/CreateGameController.getProductData';
 import { RefreshEvent } from "lightning/refresh";
 
@@ -51,9 +52,22 @@ export default class ConvertBookLead extends LightningElement {
 
   selectedGameType = '';
   gameTypeOptions = [
-      { label: 'Memoria', value: 'Memory' } //,
-      // { label: 'Caça-Palavra', value: 'WordSearch' }
+      { label: 'Memoria', value: 'Memory' },
+      { label: 'Caça-Palavra', value: 'WordSearch' },
+      { label: 'Questionário', value: 'Questions' }
   ];
+
+  get isMemoryGame() {
+    return (this.selectedGameType == 'Memory' && ('Memory' in this.gameData));
+  }
+
+  get isWordSearchGame() {
+    return (this.selectedGameType == 'WordSearch' && ('WordSearch' in this.gameData));
+  }
+
+  get isQuestionsGame() {
+    return (this.selectedGameType == 'Questions' && ('Questions' in this.gameData));
+  }
 
   gameData = {};
 
@@ -79,11 +93,15 @@ export default class ConvertBookLead extends LightningElement {
       this.selectedGameType = event.detail.value;
       console.log('selected data');
 
+      if((this.selectedGameType in this.gameData)) {
+        return;
+      }
+
       if(this.selectedGameType == 'Memory') {
         this.isShowLoading = true;
         getMemoryGameData({type: this.selectedGameType})
           .then(resolve => {
-            this.gameData = resolve;
+            this.gameData['Memory'] = resolve;
             this.totalPairs = resolve.totalPairs;
             for(let i = 0; i < this.totalPairs; i++) {
               this.pairValues.push({ value: resolve.pairPositions[i].value, uploaded: false, img: '', contentVersionId: '' }); // Initialize uploaded status as false
@@ -97,6 +115,56 @@ export default class ConvertBookLead extends LightningElement {
             this.isShowLoading = false;
         });
       }
+      else if(this.selectedGameType == 'WordSearch') {
+        this.isShowLoading = true;
+        getWordSearchGameData({type: this.selectedGameType})
+          .then(resolve => {
+            this.gameData['WordSearch'] = resolve;
+          })
+          .catch(error => {
+            console.log('Error to see game data! =>', error);
+            this.handlerDispatchToast(this.labels.errorMessage, '', 'error');
+          })
+          .finally(() => {
+            this.isShowLoading = false;
+        });
+      }
+  }
+
+  handleChangeSearchGame(event) {
+    const newWords = event.detail.value;
+    this.gameData['WordSearch'].words = newWords;
+    replaceWordsInGrid();
+  }
+
+  replaceWordsInGrid() {
+    // Iterate through the words
+    this.gameData['WordSearch'].words.forEach(wordObj => {
+      const startRow = wordObj.position.start[1] - 1; // Adjusting to 0-based index
+      const startCol = wordObj.position.start[0] - 1; // Adjusting to 0-based index
+      const endRow = wordObj.position.endX[1] - 1; // Adjusting to 0-based index
+      const endCol = wordObj.position.endX[0] - 1; // Adjusting to 0-based index
+      const word = wordObj.word;
+
+      // Check the direction of the word
+      const vertical = startCol === endCol;
+
+      let row = startRow;
+      let col = startCol;
+
+      // Replace characters in the grid with the characters of the word
+      for (let i = 0; i < word.length; i++) {
+        this.gameData['WordSearch'].grid[row][col] = word[i];
+          // Move to the next position based on the direction
+          if (vertical) {
+              if (startRow < endRow) row++; // Move down
+              else row--; // Move up
+          } else {
+              if (startCol < endCol) col++; // Move right
+              else col--; // Move left
+          }
+      }
+    });
   }
 
   handleSliderChange(event) {
@@ -118,21 +186,19 @@ export default class ConvertBookLead extends LightningElement {
 
   handleSuccess(e) {
     this.isShowLoading = true;
-    if(this.selectedGameType == 'Memory') {
-      createGameMemory({recordId: this.recordId, type: this.selectedGameType, gameData: this.gameData, images: this.pairValues, checkpoints: this.checkpoints })
-        .then(resolve => {
-          this.handlerDispatchToast(this.labels.saveMessage, '', 'success');
-        })
-        .catch(error => {
-          console.log('Error to saving game data! =>', error);
-          this.handlerDispatchToast(this.labels.errorMessage, '', 'error');
-        })
-        .finally(() => {
-          this.isShowLoading = false;
-          this.dispatchEvent(new CloseActionScreenEvent());
-          this.dispatchEvent(new RefreshEvent());
-      });
-    }    
+    createGame({recordId: this.recordId, type: this.selectedGameType, gameData: this.gameData, images: this.pairValues, checkpoints: this.checkpoints })
+      .then(resolve => {
+        this.handlerDispatchToast(this.labels.saveMessage, '', 'success');
+      })
+      .catch(error => {
+        console.log('Error to saving game data! =>', error);
+        this.handlerDispatchToast(this.labels.errorMessage, '', 'error');
+      })
+      .finally(() => {
+        this.isShowLoading = false;
+        this.dispatchEvent(new CloseActionScreenEvent());
+        this.dispatchEvent(new RefreshEvent());
+    });   
   }
 
   handleUploadFinished(event) {

@@ -2,7 +2,7 @@
   @description       : 
   @author            : douglas.marinho@globant.com
   @group             : 
-  @last modified on  : 03-27-2024
+  @last modified on  : 04-17-2024
   @last modified by  : dglsmrnh
 -->
 <template>
@@ -25,7 +25,7 @@
           </lightning-combobox>
         </lightning-layout-item>
       </lightning-layout>
-      <lightning-layout multiple-rows>
+      <lightning-layout lwc:if={isMemoryGame} multiple-rows>
         <template for:each={pairValues} for:item="pair">
           <lightning-layout-item class="content__field" size="6" key={pair.value}>
             <lightning-card title={pair.value}>    
@@ -44,6 +44,15 @@
             </lightning-card>
           </lightning-layout-item>
         </template>
+      </lightning-layout>
+      <template lwc:if={isWordSearchGame}>
+        <c-convert-book-lead-search-game
+          game-data={gameData}
+          onwordsearchchange={handleChangeSearchGame}
+        ></c-convert-book-lead-search-game>
+      </template>
+      <lightning-layout lwc:if={isQuestionsGame} multiple-rows>
+        Questionário
       </lightning-layout>
     </template>
     <template if:true={lastStep}>

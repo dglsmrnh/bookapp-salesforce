@@ -1,0 +1,24 @@
+<!--
+  @description       : 
+  @author            : dglsmrnh
+  @group             : 
+  @last modified on  : 04-17-2024
+  @last modified by  : dglsmrnh
+-->
+<template>
+    <lightning-layout>
+        Escolha a palavra:
+        <template for:each={charWord} for:item="char">            
+            <lightning-layout-item class="content__field" size="2" key={char.index}>
+                <lightning-input
+                    type="text"
+                    value={char.value}
+                    data-index={char.index}
+                    onchange={handleChange}
+                    class="char-input"
+                    max-length="1"
+                ></lightning-input>
+            </lightning-layout-item>
+        </template>
+    </lightning-layout>
+</template>
