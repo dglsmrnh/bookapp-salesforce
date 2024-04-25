@@ -10,24 +10,26 @@ export default class ConvertBookLeadSearchGame extends LightningElement {
     handleChange(event) {
         const changedIndex = event.detail.index;
         const newValue = event.detail.value;
-        const oldWord = event.detail.word;
+        const oldWord = event.detail.oldWord;
+        const newWord = event.detail.word;
 
+        let words = [];
         // Atualiza o valor do caractere correspondente na palavra correta no array words
-        let words = this.gameData['WordSearch'].words.map(wordObj => {
-            if(wordObj.word == oldWord) {
-                const splitWord = wordObj.word.split('').map((char, index) => ({ value: char, index }));
-                splitWord[changedIndex].value = newValue;
-                console.log('wordObj1=>', wordObj);
-                return { ...wordObj, word: splitWord.map(char => char.value).join('') };
-            } else {
-                console.log('wordObj2=>', wordObj);
-                return { ...wordObj };
-            }
-        });
+        try {
+            this.gameData['WordSearch'].words.forEach((wordObj, index) => {
 
-        // Dispara um evento customizado com as palavras atualizadas
+                // If the word matches the old word, update it with the new word
+                if (wordObj.word === oldWord) {
+                    words.push({ index: index, word: newWord });
+                }
+            });
+        } catch (error) {
+            console.error('An error occurred while updating the word:', error.message);
+        }
+
+        //Dispara um evento customizado com as palavras atualizadas
         const changeEvent = new CustomEvent('wordsearchchange', {
-            detail: {value: words }
+            detail: {words: words }
         });
         this.dispatchEvent(changeEvent);
     }

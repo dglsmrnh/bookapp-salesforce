@@ -1,9 +1,6 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { CloseActionScreenEvent } from "lightning/actions";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { getRecord, getFieldValue } from "lightning/uiRecordApi";
-import NAME_FIELD from "@salesforce/schema/BookLead__c.Name";
-import BOOK_FIELD from "@salesforce/schema/BookLead__c.Book__c";
 import getMemoryGameData from '@salesforce/apex/ShadifyAPI.getMemoryGameData';
 import getWordSearchGameData from '@salesforce/apex/ShadifyAPI.getWordSearchGameData';
 import createGame from '@salesforce/apex/CreateGameController.createGame';
@@ -17,13 +14,6 @@ export default class ConvertBookLead extends LightningElement {
   @track currentCheckpoint = 0;
 
   isShowLoading = false
-
-  @wire(getRecord, { recordId: "$recordId", fields: [NAME_FIELD, BOOK_FIELD] })
-  bookLead;
-
-  get name() {
-    return getFieldValue(this.bookLead.data, NAME_FIELD);
-  }
 
   @track bookData;
   @track checkpoints = [];
@@ -53,8 +43,8 @@ export default class ConvertBookLead extends LightningElement {
   selectedGameType = '';
   gameTypeOptions = [
       { label: 'Memoria', value: 'Memory' },
-      { label: 'Caça-Palavra', value: 'WordSearch' },
-      { label: 'Questionário', value: 'Questions' }
+      { label: 'Caça-Palavra', value: 'WordSearch' }//,
+      //{ label: 'Questionário', value: 'Questions' }
   ];
 
   get isMemoryGame() {
@@ -91,7 +81,6 @@ export default class ConvertBookLead extends LightningElement {
 
   handleGameTypeChange(event) {
       this.selectedGameType = event.detail.value;
-      console.log('selected data');
 
       if((this.selectedGameType in this.gameData)) {
         return;
@@ -132,9 +121,15 @@ export default class ConvertBookLead extends LightningElement {
   }
 
   handleChangeSearchGame(event) {
-    const newWords = event.detail.value;
-    this.gameData['WordSearch'].words = newWords;
-    replaceWordsInGrid();
+    const newWords = event.detail.words;
+    try {
+      newWords.forEach(word => {
+        this.gameData['WordSearch'].words[word.index].word = word.word;
+      });
+      this.replaceWordsInGrid();
+    } catch (error) {
+        console.error('An error occurred while updating the word:', error.message);
+    }
   }
 
   replaceWordsInGrid() {
@@ -202,15 +197,11 @@ export default class ConvertBookLead extends LightningElement {
   }
 
   handleUploadFinished(event) {
-      console.log(event.detail);
-      console.log(event.target.dataset);
       const uploadedFiles = event.detail.files;
       if(uploadedFiles && uploadedFiles.length > 0){
         const file = event.detail.files[0];
-        console.log(file);
         const pairIndex = this.pairValues.findIndex(pair => pair.value === event.target.dataset.pair);
         if (pairIndex !== -1 && file) {
-          console.log(pairIndex);
           this.fileContentVersionIds.set(event.target.dataset.pair, file.contentVersionId);
           this.pairValues[pairIndex].uploaded = true;
           this.pairValues[pairIndex].img = file.name;

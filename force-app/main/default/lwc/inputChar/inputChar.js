@@ -13,9 +13,13 @@ export default class InputChar extends LightningElement {
         const newValue = event.target.value;
 
         if(newValue != null && newValue != '') {
+            let oldWord = this.word;
+            const splitWord = this.word.split('').map((char, index) => ({ value: char, index }));
+            splitWord[changedIndex].value = newValue;
+            this.word = splitWord.map(char => char.value).join('');
             // Dispara um evento customizado com as palavras atualizadas
             const changeEvent = new CustomEvent('wordchange', {
-                detail: {value: newValue, index: changedIndex, word: this.word }
+                detail: {value: newValue, index: changedIndex, word: this.word, oldWord: oldWord }
             });
             this.dispatchEvent(changeEvent);
         }
