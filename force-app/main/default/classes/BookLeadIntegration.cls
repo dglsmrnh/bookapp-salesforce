@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 03-13-2024
+ * @last modified on  : 04-26-2024
  * @last modified by  : dglsmrnh
 **/
 @RestResource(urlMapping='/recommendation')
@@ -134,12 +134,21 @@ global with sharing class BookLeadIntegration {
 
         // save categories
         List<ProductCategory> categoryList = new List<ProductCategory>();
+        String concatCategory = '';
 
         for(Category category : categories) {
+            concatCategory += category.name + '|';
             categoryList.add(new ProductCategory(Name = category.name, CatalogId = catalogId, ExternalId__c = category.name));
         }
 
         if(!categoryList.IsEmpty()) {
+            concatCategory = concatCategory.left(concatCategory.length() - 1);
+
+            Product2 prd = new Product2();
+            prd.Id = productId;
+            prd.Category__c = concatCategory;
+
+            update prd;
             Database.upsert(categoryList, ProductCategory.ExternalId__c, true);
         }
 
