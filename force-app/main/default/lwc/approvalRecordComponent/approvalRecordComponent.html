@@ -1,0 +1,188 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="main__record-component">
+		<article class={cardClass}>
+			<div class={headerClass}>
+				<header class="slds-media slds-media_center slds-has-flexi-truncate">
+					<div class="container__header-checkbox" onclick={onClickSelectRecord}>
+						<svg
+							if:true={record.isSelected}
+							class="slds-button__icon slds-icon-text-success icon-svg-checbox"
+							aria-hidden="true"
+						>
+							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#check"></use>
+						</svg>
+					</div>
+
+					<div class="slds-var-m-left_small slds-media__body">
+						<a class="slds-card__header-title slds-truncate title" title={record.sobjectName} onclick={onClickOpenRecord}>
+							{record.sobjectName}
+						</a>
+					</div>
+				</header>
+
+				<div class="slds-no-flex">
+					<svg class="slds-button__icon slds-icon-text-error icon-svg" aria-hidden="true" onclick={onClickRejectRecord}>
+						<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#clear"></use>
+					</svg>
+
+					<svg class="slds-var-m-left_xx-small slds-button__icon slds-icon-text-success icon-svg" aria-hidden="true" onclick={onClickApproveRecord}>
+						<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#success"></use>
+					</svg>
+				</div>
+			</div>
+
+			<div class="slds-card__body slds-card__body_inner container__body-record">
+				<lightning-layout multiple-rows vertical-align="center">
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						{labels.objectNameLabel}
+						<p class="slds-truncate text__bold" title={record.sobjectLabel}>{record.sobjectLabel}</p>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						{labels.statusLabel}
+						<p class="slds-truncate text__bold" title={record.status}>{record.statusLabel}</p>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						{labels.processNameLabel}
+						<p class="slds-truncate text__bold" title={record.processName}>{record.processName}</p>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						{labels.approverNameLabel}
+						<p class="slds-truncate text__bold" title={record.actorName}>{record.actorName}</p>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						{labels.submitterNameLabel}
+						<p class="slds-truncate text__bold" title={record.submitterName}>{record.submitterName}</p>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						<a class="slds-truncate text__bold" title={record.checkHistoryLabel} onclick={onClickCheckHistory}>
+							{labels.checkHistoryLabel}
+						</a>
+						<template if:true={isDetailsAvailable}>
+							<br/>
+							<a class="slds-truncate text__bold" title={record.checkDetailsLabel} onclick={onClickCheckDetail}>
+								{labels.checkDetailsLabel}
+							</a>
+						</template>						
+					</lightning-layout-item>
+					<!-- <lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+						<a class="slds-truncate text__bold" title={record.checkHistoryLabel} onclick={onClickCheckHistory}>
+							{labels.checkHistoryLabel}
+						</a>
+					</lightning-layout-item> -->
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small container__comment"
+						size="12"
+					>
+						{labels.commentLabel}
+						<p class="text__bold">{record.comment}</p>
+					</lightning-layout-item>
+
+					<template if:true={isOrder}>
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.totalAmountLabel}
+							<p class="slds-truncate text__bold" title={record.orderInfo.orderAmount}>
+								<lightning-formatted-number value={record.orderInfo.orderAmount} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+							</p>
+						</lightning-layout-item>
+
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.scoreLabel}
+							<p class="slds-truncate text__bold" title={record.orderInfo.score}>
+								<lightning-formatted-number value={record.orderInfo.score} format-style="decimal"></lightning-formatted-number>
+							</p>
+						</lightning-layout-item>
+
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.margemLabel}
+							<p class="slds-truncate text__bold" title={record.orderInfo.margem}>{record.orderInfo.margem}%</p>
+						</lightning-layout-item>
+
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.margemAlvoLabel}
+							<p class="slds-truncate text__bold" title={record.orderInfo.margemAlvo}>{record.orderInfo.margemAlvo}%</p>
+						</lightning-layout-item>
+
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.orderTypeLabel}
+							<p class="slds-truncate text__bold" title={record.orderInfo.orderType}>{record.orderInfo.orderType}</p>
+						</lightning-layout-item>
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="6" medium-device-size="12" large-device-size="6"
+					>
+							{labels.createdDateLabel}
+							<p class="slds-truncate text__bold" title={record.createdDate}>{record.createdDate}</p>
+						</lightning-layout-item>
+						
+						<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small container__comment"
+						size="12"
+					>
+							{labels.accountLabel}
+							<p class="text__bold">{record.orderInfo.accountName}</p>
+						</lightning-layout-item>
+					</template>
+
+					<lightning-layout-item
+						class="slds-var-m-vertical_xx-small slds-var-p-horizontal_x-small"
+						size="12"
+					>
+						<lightning-textarea
+							name="approvalComment"
+							label={labels.approvalCommentLabel}
+							placeholder={labels.commentPlaceholder}
+							value={record.approvalComment}
+							field-level-help={labels.commentHelpText}
+							maxlength="4000"
+							onchange={onChangeData}
+						>
+						</lightning-textarea>
+					</lightning-layout-item>
+				</lightning-layout>
+			</div>
+		</article>
+	</div>
+</template>

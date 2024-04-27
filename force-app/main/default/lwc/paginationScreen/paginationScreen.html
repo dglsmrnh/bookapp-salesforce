@@ -1,0 +1,42 @@
+<!--
+  @description       : 
+  @author            : douglas.marinho@globant.com
+  @group             : 
+  @last modified on  : 03-27-2024
+  @last modified by  : dglsmrnh
+-->
+<template>
+	<div class="slds-tabs_default main">
+		<lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
+		<lightning-layout>
+			<lightning-layout-item alignment-bump="top" size="8">
+				<div onkeyup={handleKeyUp}>
+					<lightning-input
+							name="enter-search"
+							label="Procure por um livro apertando <ENTER>"
+							type="search"
+					></lightning-input>
+				</div>
+			</lightning-layout-item>
+			<!-- <lightning-layout-item class="slds-var-m-top_large" size="2">
+				<lightning-button 
+					icon-name="utility:search"  
+					size="medium" 
+					alternative-text="Pesquisar"
+					label="Pesquisar" 
+					onclick={handleSearch}></lightning-button>
+			</lightning-layout-item> -->
+		</lightning-layout>
+
+		<div
+			class="slds-tabs_default__content slds-show"
+		>
+			<c-pagination-see-more
+				book-list={bookList}
+				onsearchmore={handleSearchMore}
+				is-show-see-more-button={isShowSeeMoreButton}
+			>
+			</c-pagination-see-more>
+		</div>
+	</div>
+</template>

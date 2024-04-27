@@ -1,0 +1,81 @@
+<!--
+  @description       : 
+  @author            : douglas.marinho@globant.com
+  @group             : 
+  @last modified on  : 04-17-2024
+  @last modified by  : dglsmrnh
+-->
+<template>
+  <lightning-quick-action-panel header={labels.header}>
+    <lightning-spinner if:true={isShowLoading} alternative-text="Loading" size="medium"></lightning-spinner>
+    <lightning-progress-indicator current-step={currentStep} type="path" variant="base">
+      <lightning-progress-step label={labels.steps.step1} value="1">
+      </lightning-progress-step>
+      <lightning-progress-step label={labels.steps.step2} value="2"></lightning-progress-step>
+    </lightning-progress-indicator>
+    <template if:false={lastStep}>
+      <lightning-layout>
+        <lightning-layout-item class="content__field" size="12">
+          <lightning-combobox
+              name="gameType"
+              label="Selecione o tipo de jogo"
+              value={selectedGameType}
+              options={gameTypeOptions}
+              onchange={handleGameTypeChange}>
+          </lightning-combobox>
+        </lightning-layout-item>
+      </lightning-layout>
+      <lightning-layout lwc:if={isMemoryGame} multiple-rows>
+        <template for:each={pairValues} for:item="pair">
+          <lightning-layout-item class="content__field" size="6" key={pair.value}>
+            <lightning-card title={pair.value}>    
+              <p class="slds-p-horizontal_small">
+                <lightning-file-upload
+                    label="Faça o upload de uma imagem"
+                    name={pair.value}
+                    accept=".jpg, .png"
+                    data-pair={pair.value}
+                    record-id={recordId}
+                    onuploadfinished={handleUploadFinished}
+                    disabled={pair.uploaded}>
+                </lightning-file-upload>
+                {pair.img}
+              </p>
+            </lightning-card>
+          </lightning-layout-item>
+        </template>
+      </lightning-layout>
+      <template lwc:if={isWordSearchGame}>
+        <c-convert-book-lead-search-game
+          game-data={gameData}
+          onwordsearchchange={handleChangeSearchGame}
+        ></c-convert-book-lead-search-game>
+      </template>
+      <lightning-layout lwc:if={isQuestionsGame} multiple-rows>
+        Questionário
+      </lightning-layout>
+    </template>
+    <template if:true={lastStep}>
+      <lightning-layout multiple-rows>
+        <lightning-layout-item class="content__field" size="10" alignment-bump="top">
+          <lightning-slider label="Página do checkpoint" size="large" max={bookData.PageCount__c} value={currentCheckpoint} onchange={handleSliderChange}></lightning-slider>          
+        </lightning-layout-item>
+        <lightning-layout-item class="content__field slds-var-m-top_large" size="2">
+          <lightning-button label="Adicionar" onclick={handleAddCheckpoint}></lightning-button>
+        </lightning-layout-item>
+        <template for:each={checkpoints} for:item="checkpoint">
+          <lightning-pill key={checkpoint} label={checkpoint} data-checkpoint={checkpoint} onremove={handleRemoveCheckpoint}></lightning-pill>
+        </template>        
+      </lightning-layout>
+    </template>
+    <div slot="footer">
+      <template if:false={lastStep}>
+        <lightning-button label="Próximo" onclick={nextStep} variant="brand"></lightning-button>
+      </template>
+      <template if:true={lastStep}>
+        <lightning-button label="Anterior" onclick={prevStep} variant="brand"></lightning-button>
+        <lightning-button label="Salvar" onclick={handleSuccess} variant="success"></lightning-button>
+      </template>
+    </div>
+  </lightning-quick-action-panel>
+</template>

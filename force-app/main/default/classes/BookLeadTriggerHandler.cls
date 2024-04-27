@@ -2,8 +2,8 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-22-2024
- * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @last modified on  : 03-21-2024
+ * @last modified by  : dglsmrnh
 **/
 public with sharing class BookLeadTriggerHandler extends TriggerHandler{
     public BookLeadTriggerHandler(System.TriggerOperation operation, List<BookLead__c> newRecordList, List<BookLead__c> oldRecordList, Map<Id, BookLead__c> newMap, Map<Id, BookLead__c> oldMap) {
@@ -33,6 +33,7 @@ public with sharing class BookLeadTriggerHandler extends TriggerHandler{
 
 		public override void beforeUpdate(){
 			BookLeadHelper.changeOwner((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap);
+			BookLeadHelper.changeStatus((Map<Id,BookLead__c>)oldMap, (Map<Id,BookLead__c>)newMap);
 		}
 
 		public override void afterUpdate(){

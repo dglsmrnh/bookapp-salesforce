@@ -2,8 +2,8 @@
  * @description       : 
  * @author            : dglrmnh
  * @group             : 
- * @last modified on  : 02-22-2024
- * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @last modified on  : 03-21-2024
+ * @last modified by  : dglsmrnh
 **/
 public with sharing class BookLeadHelper {
 
@@ -41,7 +41,7 @@ public with sharing class BookLeadHelper {
 		Set<Id> setGpOrUserId = new Set<Id>();
 
 		for (User us : [SELECT Id, Name, IsActive FROM User WHERE Profile.Name IN ('Curador', 'System Administrator', 'Administrador do Sistema')]) {
-			if (!us.isActive) {
+			if (us.isActive) {
 				setGpOrUserId.add(us.Id);
 			}
 		}
@@ -103,7 +103,7 @@ public with sharing class BookLeadHelper {
         
         Map<Id, ProcessInstance> mapIdToProcessInstance = new Map<Id, ProcessInstance>([SELECT Id, TargetObjectId FROM ProcessInstance WHERE Status = 'Pending' AND ProcessDefinition.DeveloperName =: processDeveloperName AND (TargetObjectId IN: setApprovedId OR TargetObjectId IN: setReprovedId)]);
 
-        for(ProcessInstanceWorkItem workItem : [SELECT Id, ProcessInstanceId FROM ProcessInstanceWorkItem WHERE ProcessInstanceId IN :mapIdToProcessInstance.keySet()]){
+        for(ProcessInstanceWorkItem workItem : [SELECT Id, ProcessInstanceId, ActorId FROM ProcessInstanceWorkItem WHERE ProcessInstanceId IN :mapIdToProcessInstance.keySet()]){
             if(workItem.ActorId != UserInfo.getUserId()) {
                 Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
                 if (!setApprovedId.isEmpty()) {
@@ -137,5 +137,14 @@ public with sharing class BookLeadHelper {
         req.setNextApproverIds(new Id[] {userId});
 
         return req;
+    }
+
+    public static void changeStatus(Map<Id,BookLead__c> oldMap, Map<Id,BookLead__c> newMap) {
+        for(BookLead__c bk : newMap.values()) {
+            if(oldMap.get(bk.Id).isAvailableToPublish__c == false && bk.isAvailableToPublish__c == true) {
+                bk.PublishApproved__c = true;
+                bk.Status__c = 'Closed - Converted';
+            }
+        }
     }
 }

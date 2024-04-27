@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : dglsmrnh
  * @group             : 
- * @last modified on  : 02-25-2024
+ * @last modified on  : 04-26-2024
  * @last modified by  : dglsmrnh
 **/
 @RestResource(urlMapping='/recommendation')
@@ -13,19 +13,17 @@ global with sharing class BookLeadIntegration {
     @HttpPost
     global static Response BookLeadIntegration(Request request) {
         try {
-            if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() <= 0) {
-            //     throw new RecommendationException('Desculpe, esse livro já foi recomendado.');
-            // }
-                Product2 prd = request.book.serializeProduct();
-                insert prd;
-
-                BookLead__c bk = request.serializeLead(prd.Id);
-                insert bk;
-
-                linkCategories(request.book.categories, prd.Id);
+            if([SELECT Id FROM Product2 WHERE ISBN_13__c =: request.book.isbn13 OR ISBN_10__c =: request.book.isbn10].size() > 0) {
+                throw new CalloutException('Desculpe, esse livro já foi recomendado.');
             }
-            return new Response();
+            Product2 prd = request.book.serializeProduct();
+            Database.upsert(prd, Product2.ISBN_13__c, true);
 
+            BookLead__c bk = request.serializeLead(prd.Id);
+            insert bk;
+
+            linkCategories(request.book.categories, prd.Id);
+            return new Response();
         } catch(Exception e) {
             return new Response(e.getMessage());
         }
@@ -53,7 +51,7 @@ global with sharing class BookLeadIntegration {
             prd.IsActive = false;
             prd.Name = this.name.left(255);
             prd.ISBN_10__c = this.isbn10;
-            prd.ISBN_13__c = this.isbn13;
+            prd.ISBN_13__c = this.isbn13 == null ? this.isbn10 : this.isbn13;
             prd.MaturityRating__c = this.maturityRating;
             prd.Author__c = this.author.left(255);
             prd.PageCount__c = this.pageCount;
@@ -61,7 +59,9 @@ global with sharing class BookLeadIntegration {
             prd.RecordTypeId = PRODUCT_RECORDTYPE;
             prd.DisplayUrl = this.thumbnail;
             prd.Description = this.description.left(4000);
-            prd.PublishedDate__c = this.publishDate != null ? Date.valueOf(this.publishDate) : null;
+            if(this.publishDate != null) {
+                prd.PublishedDate__c = this.publishDate.length() == 10 ? Date.valueOf(this.publishDate) : null;
+            }
             prd.Publisher__c = this.publisher;
 
             return prd;
@@ -87,7 +87,7 @@ global with sharing class BookLeadIntegration {
             BookLead__c bk = new BookLead__c();
             bk.Book__c = productId;
             bk.Name = this.book.name.left(80);
-            bk.Account__c = this.accountId;
+            bk.Account__c = this.accountId == null ? null : this.accountId;
             bk.ARI__c = this.ari;
             bk.Score__c = this.score;
             bk.Flesch__c = this.flesch;
@@ -101,7 +101,9 @@ global with sharing class BookLeadIntegration {
     }
 
     global class Response {
+        @AuraEnabled
         global Boolean success { get; set; }
+        @AuraEnabled
         global String message {get; set; }
 
         global Response() {
@@ -114,7 +116,7 @@ global with sharing class BookLeadIntegration {
         }
     }
 
-    private static void linkCategories(List<Category> categories, Id productId) {
+    public static void linkCategories(List<Category> categories, Id productId) {
 
         // Get default catalog id to product type
         DefaultCatalog__mdt defaultCatalog = DefaultCatalog__mdt.getInstance('Book');
@@ -132,12 +134,21 @@ global with sharing class BookLeadIntegration {
 
         // save categories
         List<ProductCategory> categoryList = new List<ProductCategory>();
+        String concatCategory = '';
 
         for(Category category : categories) {
+            concatCategory += category.name + '|';
             categoryList.add(new ProductCategory(Name = category.name, CatalogId = catalogId, ExternalId__c = category.name));
         }
 
         if(!categoryList.IsEmpty()) {
+            concatCategory = concatCategory.left(concatCategory.length() - 1);
+
+            Product2 prd = new Product2();
+            prd.Id = productId;
+            prd.Category__c = concatCategory;
+
+            update prd;
             Database.upsert(categoryList, ProductCategory.ExternalId__c, true);
         }
 
@@ -150,9 +161,5 @@ global with sharing class BookLeadIntegration {
         if(!prdCategoryList.IsEmpty()) {
             insert prdCategoryList;
         }
-    }
-
-    private class RecommendationException extends Exception {
-    }
-    
+    }    
 }
